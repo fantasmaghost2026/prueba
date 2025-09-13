@@ -1,14 +1,7 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { Toast } from '../components/Toast';
+import { useAdmin } from './AdminContext';
 import type { CartItem } from '../types/movie';
-
-// PRECIOS EMBEBIDOS - Generados automáticamente
-const EMBEDDED_PRICES = {
-  "moviePrice": 80,
-  "seriesPrice": 300,
-  "transferFeePercentage": 10,
-  "novelPricePerChapter": 5
-};
 
 interface SeriesCartItem extends CartItem {
   selectedSeasons?: number[];
@@ -97,6 +90,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(cartReducer, { items: [], total: 0 });
+  const { state: adminState } = useAdmin();
   const [toast, setToast] = React.useState<{
     message: string;
     type: 'success' | 'error';
@@ -205,10 +199,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   };
 
   const calculateItemPrice = (item: SeriesCartItem): number => {
-    // Use embedded prices
-    const moviePrice = EMBEDDED_PRICES.moviePrice;
-    const seriesPrice = EMBEDDED_PRICES.seriesPrice;
-    const transferFeePercentage = EMBEDDED_PRICES.transferFeePercentage;
+    // Use current prices from admin state
+    const moviePrice = adminState.prices.moviePrice;
+    const seriesPrice = adminState.prices.seriesPrice;
+    const transferFeePercentage = adminState.prices.transferFeePercentage;
     
     if (item.type === 'movie') {
       const basePrice = moviePrice;
@@ -227,9 +221,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   };
 
   const calculateTotalByPaymentType = (): { cash: number; transfer: number } => {
-    const moviePrice = EMBEDDED_PRICES.moviePrice;
-    const seriesPrice = EMBEDDED_PRICES.seriesPrice;
-    const transferFeePercentage = EMBEDDED_PRICES.transferFeePercentage;
+    const moviePrice = adminState.prices.moviePrice;
+    const seriesPrice = adminState.prices.seriesPrice;
+    const transferFeePercentage = adminState.prices.transferFeePercentage;
     
     return state.items.reduce((totals, item) => {
       const basePrice = item.type === 'movie' ? moviePrice : (item.selectedSeasons?.length || 1) * seriesPrice;

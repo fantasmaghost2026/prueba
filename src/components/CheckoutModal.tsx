@@ -1,16 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, MapPin, User, Phone, Home, CreditCard, DollarSign, MessageCircle, Calculator, Truck, ExternalLink } from 'lucide-react';
-
-// ZONAS DE ENTREGA EMBEBIDAS - Generadas automáticamente
-const EMBEDDED_DELIVERY_ZONES = [];
-
-// PRECIOS EMBEBIDOS
-const EMBEDDED_PRICES = {
-  "moviePrice": 80,
-  "seriesPrice": 300,
-  "transferFeePercentage": 10,
-  "novelPricePerChapter": 5
-};
+import { useAdmin } from '../context/AdminContext';
 
 export interface CustomerInfo {
   fullName: string;
@@ -47,6 +37,7 @@ interface CheckoutModalProps {
 }
 
 export function CheckoutModal({ isOpen, onClose, onCheckout, items, total }: CheckoutModalProps) {
+  const { state: adminState } = useAdmin();
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo>({
     fullName: '',
     phone: '',
@@ -57,9 +48,28 @@ export function CheckoutModal({ isOpen, onClose, onCheckout, items, total }: Che
   const [pickupLocation, setPickupLocation] = useState(false);
   const [showLocationMap, setShowLocationMap] = useState(false);
   const [errors, setErrors] = useState<Partial<CustomerInfo>>({});
+  const [deliveryType, setDeliveryType] = useState<'pickup' | 'delivery'>('pickup');
 
-  // Use embedded delivery zones
-  const deliveryZones = EMBEDDED_DELIVERY_ZONES;
+  // Get delivery zones from admin state with real-time updates
+  const [deliveryZones, setDeliveryZones] = useState(adminState.deliveryZones);
+
+  // Listen for delivery zone updates
+  useEffect(() => {
+    const handleDeliveryZonesUpdate = (event: CustomEvent) => {
+      setDeliveryZones(event.detail);
+    };
+
+    window.addEventListener('admin_delivery_zones_updated', handleDeliveryZonesUpdate as EventListener);
+    
+    return () => {
+      window.removeEventListener('admin_delivery_zones_updated', handleDeliveryZonesUpdate as EventListener);
+    };
+  }, []);
+
+  // Update delivery zones when admin state changes
+  useEffect(() => {
+    setDeliveryZones(adminState.deliveryZones);
+  }, [adminState.deliveryZones]);
 
   // Agregar opción de recogida en el local
   const pickupOption = {
@@ -68,7 +78,16 @@ export function CheckoutModal({ isOpen, onClose, onCheckout, items, total }: Che
     cost: 0
   };
 
-  const allDeliveryOptions = [pickupOption, ...deliveryZones];
+  useEffect(() => {
+    if (deliveryType === 'pickup') {
+      setSelectedZone('pickup');
+      setDeliveryCost(0);
+      setPickupLocation(true);
+    } else if (selectedZone === 'pickup') {
+      setSelectedZone('');
+      setPickupLocation(false);
+    }
+  }, [deliveryType]);
 
   useEffect(() => {
     if (selectedZone === 'pickup') {
@@ -94,7 +113,7 @@ export function CheckoutModal({ isOpen, onClose, onCheckout, items, total }: Che
       newErrors.phone = 'Formato de teléfono inválido';
     }
 
-    if (!pickupLocation && !customerInfo.address.trim()) {
+    if (deliveryType === 'delivery' && !customerInfo.address.trim()) {
       newErrors.address = 'La dirección es requerida para entrega a domicilio';
     }
 
@@ -111,6 +130,12 @@ export function CheckoutModal({ isOpen, onClose, onCheckout, items, total }: Che
 
     if (!selectedZone) {
       alert('Por favor selecciona una opción de entrega');
+      return;
+    }
+
+    // Validar que si es entrega a domicilio, haya zonas disponibles
+    if (deliveryType === 'delivery' && deliveryZones.length === 0) {
+      alert('No hay zonas de entrega disponibles. Por favor selecciona recogida en el local.');
       return;
     }
 
@@ -215,69 +240,133 @@ export function CheckoutModal({ isOpen, onClose, onCheckout, items, total }: Che
                   )}
                 </div>
 
-                {!pickupLocation && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Dirección Completa *
-                    </label>
-                    <textarea
-                      value={customerInfo.address}
-                      onChange={(e) => handleInputChange('address', e.target.value)}
-                      rows={3}
-                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none ${
-                        errors.address ? 'border-red-500' : 'border-gray-300'
-                      }`}
-                      placeholder="Calle, número, entre calles, referencias..."
-                    />
-                    {errors.address && (
-                      <p className="text-red-500 text-sm mt-1">{errors.address}</p>
-                    )}
-                  </div>
-                )}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Dirección {deliveryType === 'delivery' ? '*' : '(Opcional)'}
+                  </label>
+                  <textarea
+                    value={customerInfo.address}
+                    onChange={(e) => handleInputChange('address', e.target.value)}
+                    rows={3}
+                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none ${
+                      errors.address ? 'border-red-500' : 'border-gray-300'
+                    }`}
+                    placeholder="Calle, número, entre calles, referencias..."
+                  />
+                  {errors.address && (
+                    <p className="text-red-500 text-sm mt-1">{errors.address}</p>
+                  )}
+                </div>
               </div>
             </div>
 
-            {/* Delivery Options */}
+            {/* Delivery Type Selection */}
             <div className="bg-gray-50 rounded-xl p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                 <MapPin className="h-5 w-5 mr-2 text-green-600" />
-                Opciones de Entrega
+                Tipo de Entrega
               </h3>
               
-              <div className="space-y-3">
-                {allDeliveryOptions.map((option) => (
-                  <label
-                    key={option.id || option.name}
-                    className={`flex items-center justify-between p-4 border rounded-lg cursor-pointer transition-colors ${
-                      selectedZone === (option.id === 'pickup' ? 'pickup' : option.name)
-                        ? 'border-green-500 bg-green-50'
-                        : 'border-gray-300 hover:border-green-300'
-                    }`}
-                  >
-                    <div className="flex items-center">
-                      <input
-                        type="radio"
-                        name="deliveryOption"
-                        value={option.id === 'pickup' ? 'pickup' : option.name}
-                        checked={selectedZone === (option.id === 'pickup' ? 'pickup' : option.name)}
-                        onChange={(e) => setSelectedZone(e.target.value)}
-                        className="mr-3 h-4 w-4 text-green-600 focus:ring-green-500"
-                      />
-                      <div>
-                        <p className="font-medium text-gray-900">{option.name}</p>
-                        {option.id === 'pickup' && (
-                          <p className="text-sm text-gray-600">Reparto Nuevo Vista Alegre, Santiago de Cuba</p>
-                        )}
-                      </div>
+              <div className="space-y-3 mb-4">
+                <label className={`flex items-center justify-between p-4 border rounded-lg cursor-pointer transition-colors ${
+                  deliveryType === 'pickup'
+                    ? 'border-green-500 bg-green-50'
+                    : 'border-gray-300 hover:border-green-300'
+                }`}>
+                  <div className="flex items-center">
+                    <input
+                      type="radio"
+                      name="deliveryType"
+                      value="pickup"
+                      checked={deliveryType === 'pickup'}
+                      onChange={(e) => setDeliveryType(e.target.value as 'pickup' | 'delivery')}
+                      className="mr-3 h-4 w-4 text-green-600 focus:ring-green-500"
+                    />
+                    <div>
+                      <p className="font-medium text-gray-900">Recogida en TV a la Carta</p>
+                      <p className="text-sm text-gray-600">Reparto Nuevo Vista Alegre, Santiago de Cuba</p>
                     </div>
-                    <div className="text-right">
-                      <p className={`font-semibold ${option.cost === 0 ? 'text-green-600' : 'text-green-600'}`}>
-                        {option.cost === 0 ? 'GRATIS' : `$${option.cost.toLocaleString()} CUP`}
+                  </div>
+                  <div className="text-right">
+                    <p className="font-semibold text-green-600">GRATIS</p>
+                  </div>
+                </label>
+
+                <label className={`flex items-center justify-between p-4 border rounded-lg cursor-pointer transition-colors ${
+                  deliveryType === 'delivery'
+                    ? 'border-blue-500 bg-blue-50'
+                    : 'border-gray-300 hover:border-blue-300'
+                }`}>
+                  <div className="flex items-center">
+                    <input
+                      type="radio"
+                      name="deliveryType"
+                      value="delivery"
+                      checked={deliveryType === 'delivery'}
+                      onChange={(e) => setDeliveryType(e.target.value as 'pickup' | 'delivery')}
+                      className="mr-3 h-4 w-4 text-blue-600 focus:ring-blue-500"
+                    />
+                    <div>
+                      <p className="font-medium text-gray-900">Entrega a Domicilio</p>
+                      <p className="text-sm text-gray-600">Selecciona tu zona de entrega</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-semibold text-blue-600">Según zona</p>
+                  </div>
+                </label>
+              </div>
+
+              {/* Delivery Zone Selection */}
+              {deliveryType === 'delivery' && (
+                <div className="mt-4">
+                  <h4 className="text-md font-semibold text-gray-900 mb-3">Seleccionar Zona de Entrega</h4>
+                  
+                  {deliveryZones.length === 0 ? (
+                    <div className="text-center py-8">
+                      <Truck className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                        No hay zonas de entrega disponibles
+                      </h3>
+                      <p className="text-gray-600 mb-4">
+                        Contacta con el administrador para configurar zonas de entrega o selecciona recogida en el local.
                       </p>
                     </div>
-                  </label>
-                ))}
-              </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {deliveryZones.map((zone) => (
+                        <label
+                          key={zone.id}
+                          className={`flex items-center justify-between p-4 border rounded-lg cursor-pointer transition-colors ${
+                            selectedZone === zone.name
+                              ? 'border-blue-500 bg-blue-50'
+                              : 'border-gray-300 hover:border-blue-300'
+                          }`}
+                        >
+                          <div className="flex items-center">
+                            <input
+                              type="radio"
+                              name="deliveryZone"
+                              value={zone.name}
+                              checked={selectedZone === zone.name}
+                              onChange={(e) => setSelectedZone(e.target.value)}
+                              className="mr-3 h-4 w-4 text-blue-600 focus:ring-blue-500"
+                            />
+                            <div>
+                              <p className="font-medium text-gray-900">{zone.name}</p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className={`font-semibold ${zone.cost === 0 ? 'text-green-600' : 'text-blue-600'}`}>
+                              {zone.cost === 0 ? 'GRATIS' : `$${zone.cost.toLocaleString()} CUP`}
+                            </p>
+                          </div>
+                        </label>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Location Map Option */}
               {pickupLocation && (
@@ -307,18 +396,6 @@ export function CheckoutModal({ isOpen, onClose, onCheckout, items, total }: Che
                       </button>
                     </div>
                   </div>
-                </div>
-              )}
-
-              {allDeliveryOptions.length === 1 && (
-                <div className="text-center py-8">
-                  <Truck className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                    Solo disponible recogida en el local
-                  </h3>
-                  <p className="text-gray-600">
-                    Contacta con el administrador para configurar zonas de entrega adicionales.
-                  </p>
                 </div>
               )}
             </div>
@@ -361,7 +438,7 @@ export function CheckoutModal({ isOpen, onClose, onCheckout, items, total }: Che
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={!selectedZone}
+              disabled={!selectedZone || (deliveryType === 'delivery' && deliveryZones.length === 0)}
               className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 disabled:from-gray-400 disabled:to-gray-500 text-white px-6 py-4 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center disabled:cursor-not-allowed"
             >
               <MessageCircle className="h-5 w-5 mr-2" />

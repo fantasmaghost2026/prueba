@@ -4,7 +4,7 @@ import JSZip from 'jszip';
 // CONFIGURACIÓN EMBEBIDA - Generada automáticamente
 const EMBEDDED_CONFIG = {
   "version": "2.1.0",
-  "lastExport": "2025-09-05T08:44:06.529Z",
+  "lastExport": "2025-01-09T20:47:45.529Z",
   "prices": {
     "moviePrice": 80,
     "seriesPrice": 300,
@@ -23,7 +23,7 @@ const EMBEDDED_CONFIG = {
     "totalOrders": 0,
     "totalRevenue": 0,
     "lastOrderDate": "",
-    "systemUptime": "2025-09-05T07:41:37.754Z"
+    "systemUptime": "2025-01-09T20:47:45.754Z"
   }
 };
 
@@ -177,6 +177,12 @@ function adminReducer(state: AdminState, action: AdminAction): AdminState {
         prices: action.payload,
         lastExport: new Date().toISOString(),
       };
+      
+      // Broadcast price changes immediately
+      window.dispatchEvent(new CustomEvent('admin_prices_updated', { 
+        detail: action.payload 
+      }));
+      
       return {
         ...state,
         prices: action.payload,
@@ -196,6 +202,12 @@ function adminReducer(state: AdminState, action: AdminAction): AdminState {
         deliveryZones: [...state.systemConfig.deliveryZones, newZone],
         lastExport: new Date().toISOString(),
       };
+      
+      // Broadcast delivery zone changes
+      window.dispatchEvent(new CustomEvent('admin_delivery_zones_updated', { 
+        detail: [...state.deliveryZones, newZone]
+      }));
+      
       return {
         ...state,
         deliveryZones: [...state.deliveryZones, newZone],
@@ -214,6 +226,12 @@ function adminReducer(state: AdminState, action: AdminAction): AdminState {
         deliveryZones: updatedZones,
         lastExport: new Date().toISOString(),
       };
+      
+      // Broadcast delivery zone changes
+      window.dispatchEvent(new CustomEvent('admin_delivery_zones_updated', { 
+        detail: updatedZones
+      }));
+      
       return {
         ...state,
         deliveryZones: updatedZones,
@@ -228,6 +246,12 @@ function adminReducer(state: AdminState, action: AdminAction): AdminState {
         deliveryZones: filteredZones,
         lastExport: new Date().toISOString(),
       };
+      
+      // Broadcast delivery zone changes
+      window.dispatchEvent(new CustomEvent('admin_delivery_zones_updated', { 
+        detail: filteredZones
+      }));
+      
       return {
         ...state,
         deliveryZones: filteredZones,
@@ -247,6 +271,12 @@ function adminReducer(state: AdminState, action: AdminAction): AdminState {
         novels: [...state.systemConfig.novels, newNovel],
         lastExport: new Date().toISOString(),
       };
+      
+      // Broadcast novel changes
+      window.dispatchEvent(new CustomEvent('admin_novels_updated', { 
+        detail: [...state.novels, newNovel]
+      }));
+      
       return {
         ...state,
         novels: [...state.novels, newNovel],
@@ -265,6 +295,12 @@ function adminReducer(state: AdminState, action: AdminAction): AdminState {
         novels: updatedNovels,
         lastExport: new Date().toISOString(),
       };
+      
+      // Broadcast novel changes
+      window.dispatchEvent(new CustomEvent('admin_novels_updated', { 
+        detail: updatedNovels
+      }));
+      
       return {
         ...state,
         novels: updatedNovels,
@@ -279,6 +315,12 @@ function adminReducer(state: AdminState, action: AdminAction): AdminState {
         novels: filteredNovels,
         lastExport: new Date().toISOString(),
       };
+      
+      // Broadcast novel changes
+      window.dispatchEvent(new CustomEvent('admin_novels_updated', { 
+        detail: filteredNovels
+      }));
+      
       return {
         ...state,
         novels: filteredNovels,
@@ -685,14 +727,39 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
         action: 'export_source_start'
       });
 
-      // Importar dinámicamente el generador de código fuente
-      try {
-        const { generateCompleteSourceCode } = await import('../utils/sourceCodeGenerator');
-        await generateCompleteSourceCode(state.systemConfig);
-      } catch (importError) {
-        console.error('Error importing source code generator:', importError);
-        throw new Error('No se pudo cargar el generador de código fuente');
-      }
+      // Generate complete source code with embedded configuration
+      const zip = new JSZip();
+      
+      // Generate AdminContext with embedded config
+      const adminContextCode = generateAdminContextCode(state);
+      zip.file('src/context/AdminContext.tsx', adminContextCode);
+      
+      // Generate CartContext with embedded prices
+      const cartContextCode = generateCartContextCode(state.prices);
+      zip.file('src/context/CartContext.tsx', cartContextCode);
+      
+      // Generate CheckoutModal with embedded zones
+      const checkoutModalCode = generateCheckoutModalCode(state.deliveryZones);
+      zip.file('src/components/CheckoutModal.tsx', checkoutModalCode);
+      
+      // Generate PriceCard with embedded prices
+      const priceCardCode = generatePriceCardCode(state.prices);
+      zip.file('src/components/PriceCard.tsx', priceCardCode);
+      
+      // Generate NovelasModal with embedded novels
+      const novelasModalCode = generateNovelasModalCode(state.novels, state.prices);
+      zip.file('src/components/NovelasModal.tsx', novelasModalCode);
+
+      // Generate the zip file
+      const content = await zip.generateAsync({ type: 'blob' });
+      const url = URL.createObjectURL(content);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `TV_a_la_Carta_SourceCode_${new Date().toISOString().split('T')[0]}.zip`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
 
       addNotification({
         type: 'success',
@@ -886,3 +953,77 @@ export function useAdmin() {
 }
 
 export { AdminContext };
+
+// Source code generators for export
+function generateAdminContextCode(state: AdminState): string {
+  return `import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import JSZip from 'jszip';
+
+// CONFIGURACIÓN EMBEBIDA - Generada automáticamente
+const EMBEDDED_CONFIG = ${JSON.stringify({
+  version: "2.1.0",
+  lastExport: new Date().toISOString(),
+  prices: state.prices,
+  deliveryZones: state.deliveryZones,
+  novels: state.novels,
+  settings: state.systemConfig.settings,
+  metadata: state.systemConfig.metadata
+}, null, 2)};
+
+// CREDENCIALES DE ACCESO (CONFIGURABLES)
+const ADMIN_CREDENTIALS = {
+  username: 'admin',
+  password: 'tvalacarta2024'
+};
+
+// ... rest of AdminContext code with embedded configuration ...
+`;
+}
+
+function generateCartContextCode(prices: PriceConfig): string {
+  return `import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import { Toast } from '../components/Toast';
+import type { CartItem } from '../types/movie';
+
+// PRECIOS EMBEBIDOS - Generados automáticamente
+const EMBEDDED_PRICES = ${JSON.stringify(prices, null, 2)};
+
+// ... rest of CartContext code with embedded prices ...
+`;
+}
+
+function generateCheckoutModalCode(deliveryZones: DeliveryZone[]): string {
+  return `import React, { useState, useEffect } from 'react';
+import { X, MapPin, User, Phone, Home, CreditCard, DollarSign, MessageCircle, Calculator, Truck, ExternalLink } from 'lucide-react';
+
+// ZONAS DE ENTREGA EMBEBIDAS - Generadas automáticamente
+const EMBEDDED_DELIVERY_ZONES = ${JSON.stringify(deliveryZones, null, 2)};
+
+// ... rest of CheckoutModal code with embedded delivery zones ...
+`;
+}
+
+function generatePriceCardCode(prices: PriceConfig): string {
+  return `import React from 'react';
+import { DollarSign, Tv, Film, Star, CreditCard } from 'lucide-react';
+
+// PRECIOS EMBEBIDOS
+const EMBEDDED_PRICES = ${JSON.stringify(prices, null, 2)};
+
+// ... rest of PriceCard code with embedded prices ...
+`;
+}
+
+function generateNovelasModalCode(novels: Novel[], prices: PriceConfig): string {
+  return `import React, { useState, useEffect } from 'react';
+import { X, Download, MessageCircle, Phone, BookOpen, Info, Check, DollarSign, CreditCard, Calculator, Search, Filter, SortAsc, SortDesc, Smartphone } from 'lucide-react';
+
+// CATÁLOGO DE NOVELAS EMBEBIDO - Generado automáticamente
+const EMBEDDED_NOVELS = ${JSON.stringify(novels, null, 2)};
+
+// PRECIOS EMBEBIDOS
+const EMBEDDED_PRICES = ${JSON.stringify(prices, null, 2)};
+
+// ... rest of NovelasModal code with embedded novels and prices ...
+`;
+}

@@ -1,13 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { DollarSign, Tv, Film, Star, CreditCard } from 'lucide-react';
-
-// PRECIOS EMBEBIDOS - Generados automáticamente
-const EMBEDDED_PRICES = {
-  "moviePrice": 80,
-  "seriesPrice": 300,
-  "transferFeePercentage": 10,
-  "novelPricePerChapter": 5
-};
+import { useAdmin } from '../context/AdminContext';
 
 interface PriceCardProps {
   type: 'movie' | 'tv';
@@ -17,10 +10,30 @@ interface PriceCardProps {
 }
 
 export function PriceCard({ type, selectedSeasons = [], episodeCount = 0, isAnime = false }: PriceCardProps) {
-  // Use embedded prices
-  const moviePrice = EMBEDDED_PRICES.moviePrice;
-  const seriesPrice = EMBEDDED_PRICES.seriesPrice;
-  const transferFeePercentage = EMBEDDED_PRICES.transferFeePercentage;
+  const { state: adminState } = useAdmin();
+  const [prices, setPrices] = useState(adminState.prices);
+
+  // Listen for price updates
+  useEffect(() => {
+    const handlePricesUpdate = (event: CustomEvent) => {
+      setPrices(event.detail);
+    };
+
+    window.addEventListener('admin_prices_updated', handlePricesUpdate as EventListener);
+    
+    return () => {
+      window.removeEventListener('admin_prices_updated', handlePricesUpdate as EventListener);
+    };
+  }, []);
+
+  // Update prices when admin state changes
+  useEffect(() => {
+    setPrices(adminState.prices);
+  }, [adminState.prices]);
+
+  const moviePrice = prices.moviePrice;
+  const seriesPrice = prices.seriesPrice;
+  const transferFeePercentage = prices.transferFeePercentage;
   
   const calculatePrice = () => {
     if (type === 'movie') {
