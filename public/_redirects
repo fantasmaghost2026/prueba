@@ -1,0 +1,11 @@
+# Netlify redirects for SPA routing
+/*    /index.html   200
+
+# Handle specific routes
+/movies    /index.html   200
+/tv        /index.html   200
+/anime     /index.html   200
+/cart      /index.html   200
+/search    /index.html   200
+/movie/*   /index.html   200
+/tv/*      /index.html   200
