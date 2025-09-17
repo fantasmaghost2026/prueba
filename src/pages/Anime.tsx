@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Filter } from 'lucide-react';
+import { Filter, Sparkles } from 'lucide-react';
 import { useOptimizedContent } from '../hooks/useOptimizedContent';
 import { tmdbService } from '../services/tmdb';
 import { MovieCard } from '../components/MovieCard';
@@ -57,7 +57,7 @@ export function Anime() {
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center mb-6">
-            <span className="mr-3 text-4xl">🎌</span>
+            <Sparkles className="mr-3 h-8 w-8 text-pink-600" />
             <h1 className="text-3xl font-bold text-gray-900">
               Anime {categoryTitles[category]}
             </h1>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Search, ShoppingCart, Film } from 'lucide-react';
+import { Search, ShoppingCart, Clapperboard, Monitor, Sparkles } from 'lucide-react';
 import { performanceOptimizer } from '../utils/performance';
 import { useCart } from '../context/CartContext';
 

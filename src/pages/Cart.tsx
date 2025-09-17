@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingCart, Trash2, Star, Calendar, MessageCircle, ArrowLeft, Edit3, Tv, DollarSign, CreditCard, Calculator, Sparkles, Zap, Heart, Check, X } from 'lucide-react';
+import { ShoppingCart, Trash2, Star, Calendar, MessageCircle, ArrowLeft, Edit3, Monitor, DollarSign, CreditCard, Calculator, Sparkles, Zap, Heart, Check, X, Clapperboard, Send } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { AdminContext } from '../context/AdminContext';
 import { PriceCard } from '../components/PriceCard';
@@ -165,7 +165,7 @@ export function Cart() {
                     {item.type === 'tv' && item.selectedSeasons && item.selectedSeasons.length > 0 && (
                       <div className="mb-3">
                         <span className="inline-block bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 px-4 py-2 rounded-full text-sm font-semibold border border-purple-200 shadow-sm">
-                          <Tv className="h-4 w-4 inline mr-2" />
+                          <Monitor className="h-4 w-4 inline mr-2" />
                           Temporadas: {item.selectedSeasons.sort((a, b) => a - b).join(', ')}
                         </span>
                       </div>
@@ -422,7 +422,7 @@ export function Cart() {
                     </p>
                   </div>
                   <div className="bg-blue-100 p-3 rounded-lg mx-auto sm:mx-0 mt-2 sm:mt-0 w-fit">
-                    <span className="text-2xl">🎬</span>
+                    <Clapperboard className="h-6 w-6 text-blue-600" />
                   </div>
                 </div>
               </div>
@@ -436,7 +436,7 @@ export function Cart() {
                     </p>
                   </div>
                   <div className="bg-purple-100 p-3 rounded-lg mx-auto sm:mx-0 mt-2 sm:mt-0 w-fit">
-                    <span className="text-2xl">📺</span>
+                    <Monitor className="h-6 w-6 text-purple-600" />
                   </div>
                 </div>
               </div>
@@ -448,7 +448,7 @@ export function Cart() {
                     <p className="text-2xl font-bold text-pink-800">{animeCount}</p>
                   </div>
                   <div className="bg-pink-100 p-3 rounded-lg mx-auto sm:mx-0 mt-2 sm:mt-0 w-fit">
-                    <span className="text-2xl">🎌</span>
+                    <Sparkles className="h-6 w-6 text-pink-600" />
                   </div>
                 </div>
               </div>
@@ -490,7 +490,7 @@ export function Cart() {
               onClick={() => setShowCheckoutModal(true)}
               className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-6 py-4 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center transform hover:scale-105 hover:shadow-lg touch-manipulation"
             >
-              <MessageCircle className="mr-3 h-6 w-6" />
+              <Send className="mr-3 h-6 w-6" />
               Finalizar Pedido
             </button>
             

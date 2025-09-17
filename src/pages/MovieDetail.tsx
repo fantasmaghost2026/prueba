@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Star, Calendar, Clock, Plus, X, Play, Film, Globe, DollarSign, TrendingUp, Users, Building, Sparkles, Heart, Zap } from 'lucide-react';
+import { ArrowLeft, Star, Calendar, Clock, Plus, X, Play, Clapperboard, Globe, DollarSign, TrendingUp, Users, Building, Sparkles, Heart, Zap, CheckCircle } from 'lucide-react';
 import { tmdbService } from '../services/tmdb';
 import { VideoPlayer } from '../components/VideoPlayer';
 import { PriceCard } from '../components/PriceCard';
@@ -322,8 +322,8 @@ export function MovieDetail() {
                 
                 {/* Success indicator */}
                 {inCart && (
-                  <div className="absolute -top-2 -right-2 bg-gradient-to-r from-green-400 to-emerald-400 text-white p-2 rounded-full animate-bounce shadow-lg">
-                    <Star className="h-4 w-4" />
+                  <div className="absolute -top-2 -right-2 bg-gradient-to-r from-green-400 to-emerald-400 text-white p-2 rounded-full shadow-lg">
+                    <CheckCircle className="h-4 w-4" />
                   </div>
                 )}
               </div>
@@ -344,7 +344,7 @@ export function MovieDetail() {
                 <div className="bg-gray-50 rounded-xl p-4 border border-gray-100 hover:border-blue-200 transition-colors">
                   <div className="flex items-center mb-2">
                     <div className="bg-blue-100 p-2 rounded-lg mr-3 shadow-sm">
-                      <Film className="h-4 w-4 text-blue-600" />
+                      <Clapperboard className="h-4 w-4 text-blue-600" />
                     </div>
                     <h3 className="font-semibold text-gray-900">Estado</h3>
                   </div>

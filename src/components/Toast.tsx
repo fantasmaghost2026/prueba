@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { CheckCircle, XCircle, X, ShoppingCart, Trash2 } from 'lucide-react';
+import { CheckCircle, XCircle, X, ShoppingCart, Trash2, Plus } from 'lucide-react';
 
 interface ToastProps {
   message: string;
@@ -38,7 +38,11 @@ export function Toast({ message, type, isVisible, onClose }: ToastProps) {
           type === 'success' ? 'bg-white/20' : 'bg-white/20'
         } animate-pulse`}>
           {type === 'success' ? (
-            <ShoppingCart className="h-5 w-5" />
+            message.includes('agregado') ? (
+              <Plus className="h-5 w-5" />
+            ) : (
+              <CheckCircle className="h-5 w-5" />
+            )
           ) : (
             <Trash2 className="h-5 w-5" />
           )}

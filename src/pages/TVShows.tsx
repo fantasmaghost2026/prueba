@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Tv, Filter } from 'lucide-react';
+import { Monitor, Filter } from 'lucide-react';
 import { useOptimizedContent } from '../hooks/useOptimizedContent';
 import { tmdbService } from '../services/tmdb';
 import { MovieCard } from '../components/MovieCard';
@@ -63,7 +63,7 @@ export function TVShows() {
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center mb-6">
-            <Tv className="mr-3 h-8 w-8 text-purple-600" />
+            <Monitor className="mr-3 h-8 w-8 text-purple-600" />
             <h1 className="text-3xl font-bold text-gray-900">
               Series {categoryTitles[category]}
             </h1>

@@ -158,7 +158,9 @@ export function sendOrderToWhatsApp(orderData: OrderData): void {
   } else {
     message += `🚚 *ENTREGA A DOMICILIO:*\n`;
     message += `• Zona: ${deliveryZone.replace(' > ', ' → ')}\n`;
-    message += `• Dirección: ${customerInfo.address}\n`;
+    if (customerInfo.address) {
+      message += `• Dirección: ${customerInfo.address}\n`;
+    }
     message += `• Costo de entrega: $${deliveryCost.toLocaleString()} CUP\n`;
   }
   

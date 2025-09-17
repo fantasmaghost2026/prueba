@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { DollarSign, Tv, Film, Star, CreditCard } from 'lucide-react';
-import { useAdmin } from '../context/AdminContext';
+import { useCart } from '../context/CartContext';
 
 interface PriceCardProps {
   type: 'movie' | 'tv';
@@ -10,30 +10,12 @@ interface PriceCardProps {
 }
 
 export function PriceCard({ type, selectedSeasons = [], episodeCount = 0, isAnime = false }: PriceCardProps) {
-  const { state: adminState } = useAdmin();
-  const [prices, setPrices] = useState(adminState.prices);
-
-  // Listen for price updates
-  useEffect(() => {
-    const handlePricesUpdate = (event: CustomEvent) => {
-      setPrices(event.detail);
-    };
-
-    window.addEventListener('admin_prices_updated', handlePricesUpdate as EventListener);
-    
-    return () => {
-      window.removeEventListener('admin_prices_updated', handlePricesUpdate as EventListener);
-    };
-  }, []);
-
-  // Update prices when admin state changes
-  useEffect(() => {
-    setPrices(adminState.prices);
-  }, [adminState.prices]);
-
-  const moviePrice = prices.moviePrice;
-  const seriesPrice = prices.seriesPrice;
-  const transferFeePercentage = prices.transferFeePercentage;
+  const { getCurrentPrices } = useCart();
+  const currentPrices = getCurrentPrices();
+  
+  const moviePrice = currentPrices.moviePrice;
+  const seriesPrice = currentPrices.seriesPrice;
+  const transferFeePercentage = currentPrices.transferFeePercentage;
   
   const calculatePrice = () => {
     if (type === 'movie') {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Film, Filter } from 'lucide-react';
+import { Clapperboard, Filter } from 'lucide-react';
 import { useOptimizedContent } from '../hooks/useOptimizedContent';
 import { tmdbService } from '../services/tmdb';
 import { MovieCard } from '../components/MovieCard';
@@ -63,7 +63,7 @@ export function Movies() {
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center mb-6">
-            <Film className="mr-3 h-8 w-8 text-blue-600" />
+            <Clapperboard className="mr-3 h-8 w-8 text-blue-600" />
             <h1 className="text-3xl font-bold text-gray-900">
               Películas {categoryTitles[category]}
             </h1>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Star, Calendar, Tv, Plus, X, Play, ChevronDown, Monitor, Rocket, Film, Clock2, Globe, Users, Building, MapPin, Sparkles, Heart, Zap, Check } from 'lucide-react';
+import { ArrowLeft, Star, Calendar, Monitor, Plus, X, Play, ChevronDown, Rocket, Clapperboard, Clock2, Globe, Users, Building, MapPin, Sparkles, Heart, Zap, Check, CheckCircle } from 'lucide-react';
 import { tmdbService } from '../services/tmdb';
 import { VideoPlayer } from '../components/VideoPlayer';
 import { PriceCard } from '../components/PriceCard';
@@ -236,7 +236,7 @@ export function TVDetail() {
                 <span>{new Date(tvShow.first_air_date).getFullYear()}</span>
               </div>
               <div className="flex items-center">
-                <Tv className="h-5 w-5 mr-1" />
+                <Monitor className="h-5 w-5 mr-1" />
                 <span>{tvShow.number_of_seasons} temporadas</span>
               </div>
             </div>
@@ -518,8 +518,8 @@ export function TVDetail() {
                 
                 {/* Success indicator */}
                 {inCart && (
-                  <div className="absolute -top-2 -right-2 bg-gradient-to-r from-green-400 to-emerald-400 text-white p-2 rounded-full animate-bounce shadow-lg">
-                    <Check className="h-4 w-4" />
+                  <div className="absolute -top-2 -right-2 bg-gradient-to-r from-green-400 to-emerald-400 text-white p-2 rounded-full shadow-lg">
+                    <CheckCircle className="h-4 w-4" />
                   </div>
                 )}
               </div>
@@ -567,7 +567,7 @@ export function TVDetail() {
                 <div className="bg-gray-50 rounded-xl p-4 border border-gray-100 hover:border-green-200 transition-colors">
                   <div className="flex items-center mb-2">
                     <div className="bg-green-100 p-2 rounded-lg mr-3 shadow-sm">
-                      <Film className="h-4 w-4 text-green-600" />
+                      <Clapperboard className="h-4 w-4 text-green-600" />
                     </div>
                     <h3 className="font-semibold text-gray-900">Temporadas</h3>
                   </div>
@@ -577,7 +577,7 @@ export function TVDetail() {
                 <div className="bg-gray-50 rounded-xl p-4 border border-gray-100 hover:border-yellow-200 transition-colors">
                   <div className="flex items-center mb-2">
                     <div className="bg-yellow-100 p-2 rounded-lg mr-3 shadow-sm">
-                      <Tv className="h-4 w-4 text-yellow-600" />
+                      <Monitor className="h-4 w-4 text-yellow-600" />
                     </div>
                     <h3 className="font-semibold text-gray-900">Episodios</h3>
                   </div>
