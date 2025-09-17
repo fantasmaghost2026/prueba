@@ -510,13 +510,13 @@ export function NovelasModal({ isOpen, onClose }: NovelasModalProps) {
             {showNovelList && allNovelas.length > 0 && (
               <div className="bg-white rounded-2xl border-2 border-gray-200 overflow-hidden">
                 {/* Enhanced Filters */}
-                <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-6 border-b border-gray-200">
+                <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-4 sm:p-6 border-b border-gray-200">
                   <div className="flex items-center mb-6">
                     <Filter className="h-6 w-6 text-purple-600 mr-3" />
-                    <h4 className="text-xl font-bold text-purple-900">Filtros de Búsqueda Avanzados</h4>
+                    <h4 className="text-lg sm:text-xl font-bold text-purple-900">Filtros de Búsqueda Avanzados</h4>
                   </div>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
                     <div className="relative">
                       <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                       <input
@@ -524,14 +524,14 @@ export function NovelasModal({ isOpen, onClose }: NovelasModalProps) {
                         placeholder="Buscar por título..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white shadow-sm"
+                        className="w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white shadow-sm"
                       />
                     </div>
                     
                     <select
                       value={selectedGenre}
                       onChange={(e) => setSelectedGenre(e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white shadow-sm"
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white shadow-sm"
                     >
                       <option value="">Todos los géneros</option>
                       {uniqueGenres.map(genre => (
@@ -542,7 +542,7 @@ export function NovelasModal({ isOpen, onClose }: NovelasModalProps) {
                     <select
                       value={selectedYear}
                       onChange={(e) => setSelectedYear(e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white shadow-sm"
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white shadow-sm"
                     >
                       <option value="">Todos los años</option>
                       {uniqueYears.map(year => (
@@ -550,11 +550,11 @@ export function NovelasModal({ isOpen, onClose }: NovelasModalProps) {
                       ))}
                     </select>
                     
-                    <div className="flex space-x-2">
+                    <div className="flex space-x-2 sm:col-span-2 lg:col-span-1">
                       <select
                         value={sortBy}
                         onChange={(e) => setSortBy(e.target.value as 'titulo' | 'año' | 'capitulos')}
-                        className="flex-1 px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm bg-white shadow-sm"
+                        className="flex-1 px-2 sm:px-3 py-2 sm:py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-xs sm:text-sm bg-white shadow-sm"
                       >
                         <option value="titulo">Título</option>
                         <option value="año">Año</option>
@@ -563,7 +563,7 @@ export function NovelasModal({ isOpen, onClose }: NovelasModalProps) {
                       
                       <button
                         onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-                        className="px-4 py-3 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-xl transition-colors shadow-sm"
+                        className="px-3 sm:px-4 py-2 sm:py-3 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-xl transition-colors shadow-sm"
                         title={`Ordenar ${sortOrder === 'asc' ? 'descendente' : 'ascendente'}`}
                       >
                         {sortOrder === 'asc' ? <SortAsc className="h-5 w-5" /> : <SortDesc className="h-5 w-5" />}
@@ -575,14 +575,14 @@ export function NovelasModal({ isOpen, onClose }: NovelasModalProps) {
                     <div className="text-sm text-purple-700 bg-white/60 px-4 py-2 rounded-xl">
                       <strong>Mostrando {filteredNovelas.length} de {allNovelas.length} novelas</strong>
                       {(searchTerm || selectedGenre || selectedYear) && (
-                        <span className="ml-2 text-purple-600">• Filtros activos</span>
+                        <span className="block sm:inline sm:ml-2 text-purple-600">• Filtros activos</span>
                       )}
                     </div>
                     
                     {(searchTerm || selectedGenre || selectedYear || sortBy !== 'titulo' || sortOrder !== 'asc') && (
                       <button
                         onClick={clearFilters}
-                        className="text-sm bg-purple-200 hover:bg-purple-300 text-purple-800 px-4 py-2 rounded-xl transition-colors font-medium"
+                        className="text-xs sm:text-sm bg-purple-200 hover:bg-purple-300 text-purple-800 px-3 sm:px-4 py-2 rounded-xl transition-colors font-medium w-full sm:w-auto text-center"
                       >
                         Limpiar filtros
                       </button>
@@ -590,21 +590,21 @@ export function NovelasModal({ isOpen, onClose }: NovelasModalProps) {
                   </div>
                 </div>
 
-                <div className="bg-gradient-to-r from-purple-100 to-pink-100 p-6 border-b border-gray-200">
+                <div className="bg-gradient-to-r from-purple-100 to-pink-100 p-4 sm:p-6 border-b border-gray-200">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between space-y-4 sm:space-y-0">
-                    <h4 className="text-xl font-bold text-gray-900">
+                    <h4 className="text-lg sm:text-xl font-bold text-gray-900 text-center sm:text-left">
                       Seleccionar Novelas ({selectedNovelas.length} seleccionadas)
                     </h4>
-                    <div className="flex space-x-3">
+                    <div className="flex space-x-2 sm:space-x-3 justify-center sm:justify-end">
                       <button
                         onClick={selectAllNovelas}
-                        className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors shadow-sm"
+                        className="bg-purple-500 hover:bg-purple-600 text-white px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-colors shadow-sm flex-1 sm:flex-none"
                       >
                         Seleccionar Todas
                       </button>
                       <button
                         onClick={clearAllNovelas}
-                        className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors shadow-sm"
+                        className="bg-gray-500 hover:bg-gray-600 text-white px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-colors shadow-sm flex-1 sm:flex-none"
                       >
                         Deseleccionar Todas
                       </button>
@@ -614,38 +614,38 @@ export function NovelasModal({ isOpen, onClose }: NovelasModalProps) {
 
                 {/* Totals summary */}
                 {selectedNovelas.length > 0 && (
-                  <div className="bg-gradient-to-r from-green-50 to-blue-50 p-6 border-b border-gray-200">
+                  <div className="bg-gradient-to-r from-green-50 to-blue-50 p-4 sm:p-6 border-b border-gray-200">
                     <div className="flex items-center mb-4">
                       <Calculator className="h-6 w-6 text-green-600 mr-3" />
-                      <h5 className="text-lg font-bold text-gray-900">Resumen de Selección</h5>
+                      <h5 className="text-base sm:text-lg font-bold text-gray-900">Resumen de Selección</h5>
                     </div>
                     
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
                       <div className="bg-white rounded-xl p-4 border border-gray-200 text-center shadow-sm">
-                        <div className="text-3xl font-bold text-purple-600">{selectedNovelas.length}</div>
-                        <div className="text-sm text-gray-600 font-medium">Novelas</div>
+                        <div className="text-2xl sm:text-3xl font-bold text-purple-600">{selectedNovelas.length}</div>
+                        <div className="text-xs sm:text-sm text-gray-600 font-medium">Novelas</div>
                       </div>
                       <div className="bg-white rounded-xl p-4 border border-gray-200 text-center shadow-sm">
-                        <div className="text-3xl font-bold text-blue-600">{totals.totalCapitulos}</div>
-                        <div className="text-sm text-gray-600 font-medium">Capítulos</div>
+                        <div className="text-2xl sm:text-3xl font-bold text-blue-600">{totals.totalCapitulos}</div>
+                        <div className="text-xs sm:text-sm text-gray-600 font-medium">Capítulos</div>
                       </div>
                       <div className="bg-white rounded-xl p-4 border border-gray-200 text-center shadow-sm">
-                        <div className="text-3xl font-bold text-green-600">${totals.cashTotal.toLocaleString()}</div>
-                        <div className="text-sm text-gray-600 font-medium">Efectivo</div>
+                        <div className="text-2xl sm:text-3xl font-bold text-green-600">${totals.cashTotal.toLocaleString()}</div>
+                        <div className="text-xs sm:text-sm text-gray-600 font-medium">Efectivo</div>
                       </div>
                       <div className="bg-white rounded-xl p-4 border border-gray-200 text-center shadow-sm">
-                        <div className="text-3xl font-bold text-orange-600">${totals.transferTotal.toLocaleString()}</div>
-                        <div className="text-sm text-gray-600 font-medium">Transferencia</div>
+                        <div className="text-2xl sm:text-3xl font-bold text-orange-600">${totals.transferTotal.toLocaleString()}</div>
+                        <div className="text-xs sm:text-sm text-gray-600 font-medium">Transferencia</div>
                       </div>
                     </div>
                     
-                    <div className="bg-gradient-to-r from-green-100 to-blue-100 rounded-xl p-6 border-2 border-green-300 shadow-lg">
-                      <div className="flex justify-between items-center">
-                        <span className="text-xl font-bold text-gray-900">TOTAL A PAGAR:</span>
-                        <span className="text-3xl font-bold text-green-600">${totals.grandTotal.toLocaleString()} CUP</span>
+                    <div className="bg-gradient-to-r from-green-100 to-blue-100 rounded-xl p-4 sm:p-6 border-2 border-green-300 shadow-lg">
+                      <div className="flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0">
+                        <span className="text-lg sm:text-xl font-bold text-gray-900">TOTAL A PAGAR:</span>
+                        <span className="text-2xl sm:text-3xl font-bold text-green-600">${totals.grandTotal.toLocaleString()} CUP</span>
                       </div>
                       {totals.transferFee > 0 && (
-                        <div className="text-sm text-orange-600 mt-2 font-medium">
+                        <div className="text-xs sm:text-sm text-orange-600 mt-2 font-medium text-center sm:text-left">
                           Incluye ${totals.transferFee.toLocaleString()} CUP de recargo por transferencia ({transferFeePercentage}%)
                         </div>
                       )}
@@ -653,7 +653,7 @@ export function NovelasModal({ isOpen, onClose }: NovelasModalProps) {
                   </div>
                 )}
 
-                <div className="max-h-96 overflow-y-auto p-6">
+                <div className="max-h-80 sm:max-h-96 overflow-y-auto p-4 sm:p-6">
                   <div className="grid grid-cols-1 gap-4">
                     {filteredNovelas.length > 0 ? (
                       filteredNovelas.map((novela) => {
@@ -665,74 +665,74 @@ export function NovelasModal({ isOpen, onClose }: NovelasModalProps) {
                       return (
                         <div
                           key={novela.id}
-                          className={`p-6 rounded-2xl border-2 transition-all duration-300 ${
+                          className={`p-4 sm:p-6 rounded-2xl border-2 transition-all duration-300 ${
                             isSelected 
                               ? 'bg-purple-50 border-purple-300 shadow-lg transform scale-[1.02]' 
                               : 'bg-gray-50 border-gray-200 hover:bg-purple-25 hover:border-purple-200 hover:shadow-md'
                           }`}
                         >
-                          <div className="flex items-start space-x-4">
+                          <div className="flex flex-col sm:flex-row sm:items-start space-y-4 sm:space-y-0 sm:space-x-4">
                             <input
                               type="checkbox"
                               checked={isSelected}
                               onChange={() => handleNovelToggle(novela.id)}
-                              className="mt-2 h-6 w-6 text-purple-600 focus:ring-purple-500 border-gray-300 rounded-lg"
+                              className="mt-0 sm:mt-2 h-5 w-5 sm:h-6 sm:w-6 text-purple-600 focus:ring-purple-500 border-gray-300 rounded-lg self-start"
                             />
                             
                             <div className="flex-1">
-                              <div className="flex flex-col lg:flex-row lg:items-start justify-between space-y-4 lg:space-y-0">
+                              <div className="flex flex-col xl:flex-row xl:items-start justify-between space-y-4 xl:space-y-0">
                                 <div className="flex-1">
-                                  <h3 className="text-xl font-bold text-gray-900 mb-3">{novela.titulo}</h3>
-                                  <div className="flex flex-wrap gap-3 text-sm text-gray-600 mb-4">
-                                    <span className="bg-purple-100 text-purple-700 px-3 py-2 rounded-full font-medium">
+                                  <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-3">{novela.titulo}</h3>
+                                  <div className="flex flex-wrap gap-2 sm:gap-3 text-xs sm:text-sm text-gray-600 mb-4">
+                                    <span className="bg-purple-100 text-purple-700 px-2 sm:px-3 py-1 sm:py-2 rounded-full font-medium">
                                       📺 {novela.genero}
                                     </span>
-                                    <span className="bg-blue-100 text-blue-700 px-3 py-2 rounded-full font-medium">
+                                    <span className="bg-blue-100 text-blue-700 px-2 sm:px-3 py-1 sm:py-2 rounded-full font-medium">
                                       📊 {novela.capitulos} capítulos
                                     </span>
-                                    <span className="bg-green-100 text-green-700 px-3 py-2 rounded-full font-medium">
+                                    <span className="bg-green-100 text-green-700 px-2 sm:px-3 py-1 sm:py-2 rounded-full font-medium">
                                       📅 {novela.año}
                                     </span>
                                   </div>
                                   
                                   {novela.descripcion && (
-                                    <p className="text-gray-600 mb-4 leading-relaxed">{novela.descripcion}</p>
+                                    <p className="text-sm sm:text-base text-gray-600 mb-4 leading-relaxed">{novela.descripcion}</p>
                                   )}
                                   
                                   {/* Enhanced Payment type selector */}
-                                  <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+                                  <div className="bg-white rounded-xl p-3 sm:p-4 border border-gray-200 shadow-sm">
                                     <div className="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
-                                      <span className="text-sm font-bold text-gray-700">💳 Tipo de pago:</span>
-                                      <div className="flex space-x-3">
+                                      <span className="text-xs sm:text-sm font-bold text-gray-700">💳 Tipo de pago:</span>
+                                      <div className="flex space-x-2 sm:space-x-3">
                                         <button
                                           onClick={() => handlePaymentTypeChange(novela.id, 'cash')}
-                                          className={`px-4 py-3 rounded-xl text-sm font-bold transition-all duration-300 transform hover:scale-105 ${
+                                          className={`px-3 sm:px-4 py-2 sm:py-3 rounded-xl text-xs sm:text-sm font-bold transition-all duration-300 transform hover:scale-105 flex-1 sm:flex-none ${
                                             novela.paymentType === 'cash'
                                               ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg'
                                               : 'bg-gray-200 text-gray-600 hover:bg-green-100 border-2 border-gray-300 hover:border-green-300'
                                           }`}
                                         >
-                                          <DollarSign className="h-4 w-4 inline mr-2" />
+                                          <DollarSign className="h-3 w-3 sm:h-4 sm:w-4 inline mr-1 sm:mr-2" />
                                           Efectivo
                                           {novela.paymentType === 'cash' && (
-                                            <Check className="h-4 w-4 inline ml-2" />
+                                            <Check className="h-3 w-3 sm:h-4 sm:w-4 inline ml-1 sm:ml-2" />
                                           )}
                                         </button>
                                         <button
                                           onClick={() => handlePaymentTypeChange(novela.id, 'transfer')}
-                                          className={`px-4 py-3 rounded-xl text-sm font-bold transition-all duration-300 transform hover:scale-105 ${
+                                          className={`px-3 sm:px-4 py-2 sm:py-3 rounded-xl text-xs sm:text-sm font-bold transition-all duration-300 transform hover:scale-105 flex-1 sm:flex-none ${
                                             novela.paymentType === 'transfer'
                                               ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg'
                                               : 'bg-gray-200 text-gray-600 hover:bg-orange-100 border-2 border-gray-300 hover:border-orange-300'
                                           }`}
                                         >
-                                          <CreditCard className="h-4 w-4 inline mr-2" />
+                                          <CreditCard className="h-3 w-3 sm:h-4 sm:w-4 inline mr-1 sm:mr-2" />
                                           Transferencia
-                                          <span className="ml-1 text-xs opacity-90">
+                                          <span className="ml-1 text-xs opacity-90 hidden sm:inline">
                                             (+{transferFeePercentage}%)
                                           </span>
                                           {novela.paymentType === 'transfer' && (
-                                            <Check className="h-4 w-4 inline ml-2" />
+                                            <Check className="h-3 w-3 sm:h-4 sm:w-4 inline ml-1 sm:ml-2" />
                                           )}
                                         </button>
                                       </div>
@@ -740,14 +740,14 @@ export function NovelasModal({ isOpen, onClose }: NovelasModalProps) {
                                   </div>
                                 </div>
                                 
-                                <div className="text-center lg:text-right lg:ml-6 bg-white rounded-xl p-4 border border-gray-200 shadow-sm min-w-[200px]">
-                                  <div className={`text-2xl font-bold mb-2 ${
+                                <div className="text-center xl:text-right xl:ml-6 bg-white rounded-xl p-3 sm:p-4 border border-gray-200 shadow-sm xl:min-w-[200px]">
+                                  <div className={`text-xl sm:text-2xl font-bold mb-2 ${
                                     novela.paymentType === 'cash' ? 'text-green-600' : 'text-orange-600'
                                   }`}>
                                     ${finalCost.toLocaleString()} CUP
                                   </div>
                                   {novela.paymentType === 'transfer' && (
-                                    <div className="text-sm text-gray-500 space-y-1">
+                                    <div className="text-xs sm:text-sm text-gray-500 space-y-1">
                                       <div>Base: ${baseCost.toLocaleString()} CUP</div>
                                       <div className="text-orange-600 font-medium">
                                         Recargo: +${(transferCost - baseCost).toLocaleString()} CUP
@@ -762,7 +762,7 @@ export function NovelasModal({ isOpen, onClose }: NovelasModalProps) {
                             </div>
                             
                             {isSelected && (
-                              <div className="bg-purple-500 text-white p-2 rounded-full animate-bounce shadow-lg">
+                              <div className="bg-purple-500 text-white p-2 rounded-full animate-bounce shadow-lg self-start sm:self-auto">
                                 <Check className="h-5 w-5" />
                               </div>
                             )}
@@ -772,16 +772,16 @@ export function NovelasModal({ isOpen, onClose }: NovelasModalProps) {
                       })
                     ) : (
                       <div className="text-center py-12">
-                        <BookOpen className="h-16 w-16 text-gray-400 mx-auto mb-6" />
-                        <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                        <BookOpen className="h-12 w-12 sm:h-16 sm:w-16 text-gray-400 mx-auto mb-4 sm:mb-6" />
+                        <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3">
                           No se encontraron novelas
                         </h3>
-                        <p className="text-gray-600 mb-6">
+                        <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6">
                           No hay novelas que coincidan con los filtros seleccionados.
                         </p>
                         <button
                           onClick={clearFilters}
-                          className="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-xl font-medium transition-colors shadow-sm"
+                          className="bg-purple-500 hover:bg-purple-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl text-sm sm:text-base font-medium transition-colors shadow-sm"
                         >
                           Limpiar filtros
                         </button>
@@ -791,26 +791,26 @@ export function NovelasModal({ isOpen, onClose }: NovelasModalProps) {
                 </div>
 
                 {selectedNovelas.length > 0 && (
-                  <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-6 border-t border-gray-200">
+                  <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-4 sm:p-6 border-t border-gray-200">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between space-y-4 sm:space-y-0">
                       <div className="text-center sm:text-left">
-                        <p className="text-lg font-bold text-gray-900">
+                        <p className="text-base sm:text-lg font-bold text-gray-900">
                           {selectedNovelas.length} novelas seleccionadas
                         </p>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-xs sm:text-sm text-gray-600">
                           Total: ${totals.grandTotal.toLocaleString()} CUP
                         </p>
                       </div>
                       <button
                         onClick={sendSelectedNovelas}
                         disabled={selectedNovelas.length === 0}
-                        className={`w-full sm:w-auto px-6 sm:px-8 py-4 rounded-2xl font-bold transition-all duration-300 transform hover:scale-105 flex items-center justify-center shadow-lg ${
+                        className={`w-full sm:w-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4 rounded-2xl text-sm sm:text-base font-bold transition-all duration-300 transform hover:scale-105 flex items-center justify-center shadow-lg ${
                           selectedNovelas.length > 0
                             ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white'
                             : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                         }`}
                       >
-                        <Send className="h-6 w-6 mr-3" />
+                        <Send className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 mr-2 sm:mr-3" />
                         Enviar por WhatsApp
                       </button>
                     </div>

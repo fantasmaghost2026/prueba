@@ -376,28 +376,28 @@ export function CheckoutModal({ isOpen, onClose, onCheckout, items, total }: Che
 
               {/* Location Map Option */}
               {pickupLocation && (
-                <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                  <div className="flex items-center justify-between">
+                <div className="mt-4 p-3 sm:p-4 bg-blue-50 rounded-lg border border-blue-200">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between space-y-3 sm:space-y-0">
                     <div>
-                      <h4 className="font-medium text-blue-900">Ubicación del Local</h4>
-                      <p className="text-sm text-blue-700">Ver ubicación en Google Maps (opcional)</p>
+                      <h4 className="font-medium text-blue-900 text-sm sm:text-base">Ubicación del Local</h4>
+                      <p className="text-xs sm:text-sm text-blue-700">Ver ubicación en Google Maps (opcional)</p>
                     </div>
-                    <div className="flex items-center space-x-3">
-                      <label className="flex items-center">
+                    <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-3">
+                      <label className="flex items-center justify-center sm:justify-start w-full sm:w-auto">
                         <input
                           type="checkbox"
                           checked={showLocationMap}
                           onChange={(e) => setShowLocationMap(e.target.checked)}
-                          className="mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500"
+                          className="mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500 flex-shrink-0"
                         />
-                        <span className="text-sm text-blue-700">Incluir ubicación</span>
+                        <span className="text-xs sm:text-sm text-blue-700">Incluir ubicación</span>
                       </label>
                       <button
                         type="button"
                         onClick={openLocationMap}
-                        className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center"
+                        className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors flex items-center justify-center w-full sm:w-auto"
                       >
-                        <ExternalLink className="h-4 w-4 mr-1" />
+                        <ExternalLink className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
                         Ver Mapa
                       </button>
                     </div>
