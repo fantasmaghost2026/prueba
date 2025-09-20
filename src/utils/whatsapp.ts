@@ -39,6 +39,7 @@ export function sendOrderToWhatsApp(orderData: OrderData): void {
         return {
           moviePrice: state.prices?.moviePrice || 80,
           seriesPrice: state.prices?.seriesPrice || 300,
+          novelPricePerChapter: state.prices?.novelPricePerChapter || 5,
           transferFeePercentage: state.prices?.transferFeePercentage || 10
         };
       }
@@ -48,6 +49,7 @@ export function sendOrderToWhatsApp(orderData: OrderData): void {
     return {
       moviePrice: 80,
       seriesPrice: 300,
+      novelPricePerChapter: 5,
       transferFeePercentage: 10
     };
   };
@@ -58,16 +60,30 @@ export function sendOrderToWhatsApp(orderData: OrderData): void {
   // Formatear lista de productos con desglose detallado de métodos de pago
   const itemsList = items
     .map(item => {
-      const seasonInfo = item.selectedSeasons && item.selectedSeasons.length > 0 
+      const seasonInfo = item.type === 'tv' && item.selectedSeasons && item.selectedSeasons.length > 0 
         ? `\n  📺 Temporadas: ${item.selectedSeasons.sort((a, b) => a - b).join(', ')}` 
         : '';
-      const itemType = item.type === 'movie' ? 'Película' : 'Serie';
-      const basePrice = item.type === 'movie' ? currentPrices.moviePrice : (item.selectedSeasons?.length || 1) * currentPrices.seriesPrice;
+      
+      const novelInfo = item.type === 'novel' 
+        ? `\n  📚 Capítulos: ${item.chapters}\n  📖 Género: ${item.genre}` 
+        : '';
+      
+      const itemType = item.type === 'movie' ? 'Película' : item.type === 'tv' ? 'Serie' : 'Novela';
+      
+      let basePrice: number;
+      if (item.type === 'novel') {
+        basePrice = item.chapters * currentPrices.novelPricePerChapter;
+      } else if (item.type === 'movie') {
+        basePrice = currentPrices.moviePrice;
+      } else {
+        basePrice = (item.selectedSeasons?.length || 1) * currentPrices.seriesPrice;
+      }
+      
       const finalPrice = item.paymentType === 'transfer' ? Math.round(basePrice * (1 + transferFeePercentage / 100)) : basePrice;
       const paymentTypeText = item.paymentType === 'transfer' ? `Transferencia (+${transferFeePercentage}%)` : 'Efectivo';
-      const emoji = item.type === 'movie' ? '🎬' : '📺';
+      const emoji = item.type === 'movie' ? '🎬' : item.type === 'tv' ? '📺' : '📚';
       
-      let itemText = `${emoji} *${item.title}*${seasonInfo}\n`;
+      let itemText = `${emoji} *${item.title}*${seasonInfo}${novelInfo}\n`;
       itemText += `  📋 Tipo: ${itemType}\n`;
       itemText += `  💳 Método de pago: ${paymentTypeText}\n`;
       
@@ -108,8 +124,15 @@ export function sendOrderToWhatsApp(orderData: OrderData): void {
   if (cashItems.length > 0) {
     message += `💵 *PAGO EN EFECTIVO:*\n`;
     cashItems.forEach(item => {
-      const basePrice = item.type === 'movie' ? currentPrices.moviePrice : (item.selectedSeasons?.length || 1) * currentPrices.seriesPrice;
-      const emoji = item.type === 'movie' ? '🎬' : '📺';
+      let basePrice: number;
+      if (item.type === 'novel') {
+        basePrice = item.chapters * currentPrices.novelPricePerChapter;
+      } else if (item.type === 'movie') {
+        basePrice = currentPrices.moviePrice;
+      } else {
+        basePrice = (item.selectedSeasons?.length || 1) * currentPrices.seriesPrice;
+      }
+      const emoji = item.type === 'movie' ? '🎬' : item.type === 'tv' ? '📺' : '📚';
       message += `  ${emoji} ${item.title}: $${basePrice.toLocaleString()} CUP\n`;
     });
     message += `  💰 *Subtotal Efectivo: $${cashTotal.toLocaleString()} CUP*\n\n`;
@@ -118,10 +141,17 @@ export function sendOrderToWhatsApp(orderData: OrderData): void {
   if (transferItems.length > 0) {
     message += `🏦 *PAGO POR TRANSFERENCIA BANCARIA (+${transferFeePercentage}%):*\n`;
     transferItems.forEach(item => {
-      const basePrice = item.type === 'movie' ? currentPrices.moviePrice : (item.selectedSeasons?.length || 1) * currentPrices.seriesPrice;
+      let basePrice: number;
+      if (item.type === 'novel') {
+        basePrice = item.chapters * currentPrices.novelPricePerChapter;
+      } else if (item.type === 'movie') {
+        basePrice = currentPrices.moviePrice;
+      } else {
+        basePrice = (item.selectedSeasons?.length || 1) * currentPrices.seriesPrice;
+      }
       const finalPrice = Math.round(basePrice * (1 + transferFeePercentage / 100));
       const recargo = finalPrice - basePrice;
-      const emoji = item.type === 'movie' ? '🎬' : '📺';
+      const emoji = item.type === 'movie' ? '🎬' : item.type === 'tv' ? '📺' : '📚';
       message += `  ${emoji} ${item.title}:\n`;
       message += `    💰 Base: $${basePrice.toLocaleString()} CUP\n`;
       message += `    💳 Recargo (${transferFeePercentage}%): +$${recargo.toLocaleString()} CUP\n`;
@@ -170,6 +200,7 @@ export function sendOrderToWhatsApp(orderData: OrderData): void {
   message += `• Total de elementos: ${items.length}\n`;
   message += `• Películas: ${items.filter(item => item.type === 'movie').length}\n`;
   message += `• Series: ${items.filter(item => item.type === 'tv').length}\n`;
+  message += `• Novelas: ${items.filter(item => item.type === 'novel').length}\n`;
   if (cashItems.length > 0) {
     message += `• Pago en efectivo: ${cashItems.length} elementos\n`;
   }
@@ -181,6 +212,7 @@ export function sendOrderToWhatsApp(orderData: OrderData): void {
   message += `💼 *CONFIGURACIÓN DE PRECIOS APLICADA:*\n`;
   message += `• Películas: $${currentPrices.moviePrice.toLocaleString()} CUP\n`;
   message += `• Series: $${currentPrices.seriesPrice.toLocaleString()} CUP por temporada\n`;
+  message += `• Novelas: $${currentPrices.novelPricePerChapter.toLocaleString()} CUP por capítulo\n`;
   message += `• Recargo transferencia: ${transferFeePercentage}%\n\n`;
   
   message += `📱 *Enviado desde:* TV a la Carta App\n`;

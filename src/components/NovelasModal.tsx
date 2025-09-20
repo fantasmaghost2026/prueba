@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { X, Download, MessageCircle, Phone, BookOpen, Info, Check, DollarSign, CreditCard, Calculator, Search, Filter, SortAsc, SortDesc, Smartphone, FileText, Send } from 'lucide-react';
+import { X, Download, MessageCircle, Phone, BookOpen, Info, Check, DollarSign, CreditCard, Calculator, Search, Filter, SortAsc, SortDesc, Smartphone, FileText, Send, ShoppingCart } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import type { NovelCartItem } from '../types/movie';
 
 interface Novela {
   id: number;
@@ -15,13 +16,14 @@ interface Novela {
 interface NovelasModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onFinalizePedido?: (selectedNovels: NovelCartItem[]) => void;
 }
 
-export function NovelasModal({ isOpen, onClose }: NovelasModalProps) {
-  const { getCurrentPrices } = useCart();
+export function NovelasModal({ isOpen, onClose, onFinalizePedido }: NovelasModalProps) {
+  const { getCurrentPrices, addNovel } = useCart();
   const [selectedNovelas, setSelectedNovelas] = useState<number[]>([]);
   const [novelasWithPayment, setNovelasWithPayment] = useState<Novela[]>([]);
-  const [showNovelList, setShowNovelList] = useState(false);
+  const [showNovelList, setShowNovelList] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedGenre, setSelectedGenre] = useState('');
   const [selectedYear, setSelectedYear] = useState('');
@@ -103,6 +105,16 @@ export function NovelasModal({ isOpen, onClose }: NovelasModalProps) {
       paymentType: 'cash' as const
     }));
     setNovelasWithPayment(novelasWithDefaultPayment);
+    
+    // Cargar novelas previamente seleccionadas del carrito
+    const cartItems = JSON.parse(localStorage.getItem('movieCart') || '[]');
+    const novelasEnCarrito = cartItems
+      .filter((item: any) => item.type === 'novel')
+      .map((item: any) => item.id);
+    
+    if (novelasEnCarrito.length > 0) {
+      setSelectedNovelas(novelasEnCarrito);
+    }
   }, [adminNovels]);
 
   // Filter novels function
@@ -286,72 +298,42 @@ export function NovelasModal({ isOpen, onClose }: NovelasModalProps) {
     URL.revokeObjectURL(url);
   };
 
-  const sendSelectedNovelas = () => {
+  const handleFinalizePedido = () => {
     if (selectedNovelas.length === 0) {
       alert('Por favor selecciona al menos una novela');
       return;
     }
 
-    const { cashNovelas, transferNovelas, cashTotal, transferBaseTotal, transferFee, transferTotal, grandTotal, totalCapitulos } = totals;
-    
-    let message = "📚 *PEDIDO DE NOVELAS - TV A LA CARTA*\n\n";
-    message += "Me interesan los siguientes títulos:\n\n";
-    
-    // Cash novels
-    if (cashNovelas.length > 0) {
-      message += "💵 PAGO EN EFECTIVO:\n";
-      message += "═══════════════════════════════════\n";
-      cashNovelas.forEach((novela, index) => {
-        message += `${index + 1}. ${novela.titulo}\n`;
-        message += `   📺 Género: ${novela.genero}\n`;
-        message += `   📊 Capítulos: ${novela.capitulos}\n`;
-        message += `   📅 Año: ${novela.año}\n`;
-        message += `   💰 Costo: $${(novela.capitulos * novelPricePerChapter).toLocaleString()} CUP\n\n`;
-      });
-      message += `💰 Subtotal Efectivo: $${cashTotal.toLocaleString()} CUP\n`;
-      message += `📊 Total capítulos: ${cashNovelas.reduce((sum, n) => sum + n.capitulos, 0)}\n\n`;
-    }
-    
-    // Transfer novels
-    if (transferNovelas.length > 0) {
-      message += `🏦 PAGO POR TRANSFERENCIA BANCARIA (+${transferFeePercentage}%):\n`;
-      message += "═══════════════════════════════════\n";
-      transferNovelas.forEach((novela, index) => {
-        const baseCost = novela.capitulos * novelPricePerChapter;
-        const fee = Math.round(baseCost * (transferFeePercentage / 100));
-        const totalCost = baseCost + fee;
-        message += `${index + 1}. ${novela.titulo}\n`;
-        message += `   📺 Género: ${novela.genero}\n`;
-        message += `   📊 Capítulos: ${novela.capitulos}\n`;
-        message += `   📅 Año: ${novela.año}\n`;
-        message += `   💰 Costo base: $${baseCost.toLocaleString()} CUP\n`;
-        message += `   💳 Recargo (${transferFeePercentage}%): +$${fee.toLocaleString()} CUP\n`;
-        message += `   💰 Costo total: $${totalCost.toLocaleString()} CUP\n\n`;
-      });
-      message += `💰 Subtotal base transferencia: $${transferBaseTotal.toLocaleString()} CUP\n`;
-      message += `💳 Recargo total (${transferFeePercentage}%): +$${transferFee.toLocaleString()} CUP\n`;
-      message += `💰 Subtotal Transferencia: $${transferTotal.toLocaleString()} CUP\n`;
-      message += `📊 Total capítulos: ${transferNovelas.reduce((sum, n) => sum + n.capitulos, 0)}\n\n`;
-    }
-    
-    // Final summary
-    message += "📊 RESUMEN FINAL:\n";
-    message += "═══════════════════════════════════\n";
-    message += `• Total de novelas: ${selectedNovelas.length}\n`;
-    message += `• Total de capítulos: ${totalCapitulos}\n`;
-    if (cashTotal > 0) {
-      message += `• Efectivo: $${cashTotal.toLocaleString()} CUP (${cashNovelas.length} novelas)\n`;
-    }
-    if (transferTotal > 0) {
-      message += `• Transferencia: $${transferTotal.toLocaleString()} CUP (${transferNovelas.length} novelas)\n`;
-    }
-    message += `• *TOTAL A PAGAR: $${grandTotal.toLocaleString()} CUP*\n\n`;
-    message += `📱 Enviado desde TV a la Carta\n`;
-    message += `📅 Fecha: ${new Date().toLocaleString('es-ES')}`;
+    // Convertir novelas seleccionadas a NovelCartItem
+    const selectedNovelItems: NovelCartItem[] = novelasWithPayment
+      .filter(novela => selectedNovelas.includes(novela.id))
+      .map(novela => ({
+        id: novela.id,
+        title: novela.titulo,
+        type: 'novel' as const,
+        genre: novela.genero,
+        chapters: novela.capitulos,
+        year: novela.año,
+        description: novela.descripcion,
+        paymentType: novela.paymentType || 'cash',
+        pricePerChapter: novelPricePerChapter,
+        totalPrice: novela.paymentType === 'transfer' 
+          ? Math.round((novela.capitulos * novelPricePerChapter) * (1 + transferFeePercentage / 100))
+          : novela.capitulos * novelPricePerChapter
+      }));
 
-    const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/5354690878?text=${encodedMessage}`;
-    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+    // Agregar novelas al carrito
+    selectedNovelItems.forEach(novel => {
+      addNovel(novel);
+    });
+
+    // Cerrar modal
+    onClose();
+    
+    // Opcional: callback para ir directamente al checkout
+    if (onFinalizePedido) {
+      onFinalizePedido(selectedNovelItems);
+    }
   };
 
   const handleCall = () => {
@@ -802,7 +784,7 @@ export function NovelasModal({ isOpen, onClose }: NovelasModalProps) {
                         </p>
                       </div>
                       <button
-                        onClick={sendSelectedNovelas}
+                        onClick={handleFinalizePedido}
                         disabled={selectedNovelas.length === 0}
                         className={`w-full sm:w-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4 rounded-2xl text-sm sm:text-base font-bold transition-all duration-300 transform hover:scale-105 flex items-center justify-center shadow-lg ${
                           selectedNovelas.length > 0
@@ -810,8 +792,8 @@ export function NovelasModal({ isOpen, onClose }: NovelasModalProps) {
                             : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                         }`}
                       >
-                        <Send className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 mr-2 sm:mr-3" />
-                        Enviar por WhatsApp
+                        <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 mr-2 sm:mr-3" />
+                        Finalizar Pedido
                       </button>
                     </div>
                   </div>

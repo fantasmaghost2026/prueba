@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { Toast } from '../components/Toast';
-import type { CartItem } from '../types/movie';
+import type { CartItem, NovelCartItem, AllCartItems } from '../types/movie';
 
 // PRECIOS EMBEBIDOS - Generados automáticamente
 const EMBEDDED_PRICES = {
@@ -16,22 +16,23 @@ interface SeriesCartItem extends CartItem {
 }
 
 interface CartState {
-  items: SeriesCartItem[];
+  items: (SeriesCartItem | NovelCartItem)[];
   total: number;
 }
 
 type CartAction = 
-  | { type: 'ADD_ITEM'; payload: SeriesCartItem }
+  | { type: 'ADD_ITEM'; payload: SeriesCartItem | NovelCartItem }
   | { type: 'REMOVE_ITEM'; payload: number }
   | { type: 'UPDATE_SEASONS'; payload: { id: number; seasons: number[] } }
   | { type: 'UPDATE_PAYMENT_TYPE'; payload: { id: number; paymentType: 'cash' | 'transfer' } }
   | { type: 'CLEAR_CART' }
-  | { type: 'LOAD_CART'; payload: SeriesCartItem[] }
+  | { type: 'LOAD_CART'; payload: (SeriesCartItem | NovelCartItem)[] }
   | { type: 'UPDATE_PRICES'; payload: any };
 
 interface CartContextType {
   state: CartState;
-  addItem: (item: SeriesCartItem) => void;
+  addItem: (item: SeriesCartItem | NovelCartItem) => void;
+  addNovel: (novel: NovelCartItem) => void;
   removeItem: (id: number) => void;
   updateSeasons: (id: number, seasons: number[]) => void;
   updatePaymentType: (id: number, paymentType: 'cash' | 'transfer') => void;
@@ -39,7 +40,7 @@ interface CartContextType {
   isInCart: (id: number) => boolean;
   getItemSeasons: (id: number) => number[];
   getItemPaymentType: (id: number) => 'cash' | 'transfer';
-  calculateItemPrice: (item: SeriesCartItem) => number;
+  calculateItemPrice: (item: SeriesCartItem | NovelCartItem) => number;
   calculateTotalPrice: () => number;
   calculateTotalByPaymentType: () => { cash: number; transfer: number };
   getCurrentPrices: () => any;
@@ -62,7 +63,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
       return {
         ...state,
         items: state.items.map(item => 
-          item.id === action.payload.id 
+          item.id === action.payload.id && item.type !== 'novel'
             ? { ...item, selectedSeasons: action.payload.seasons }
             : item
         )
@@ -192,11 +193,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem('movieCart', JSON.stringify(state.items));
   }, [state.items]);
 
-  const addItem = (item: SeriesCartItem) => {
+  const addItem = (item: SeriesCartItem | NovelCartItem) => {
     const itemWithDefaults = { 
       ...item, 
       paymentType: 'cash' as const,
-      selectedSeasons: item.type === 'tv' && !item.selectedSeasons ? [1] : item.selectedSeasons
+      selectedSeasons: item.type === 'tv' && 'selectedSeasons' in item && !item.selectedSeasons ? [1] : 'selectedSeasons' in item ? item.selectedSeasons : undefined
     };
     dispatch({ type: 'ADD_ITEM', payload: itemWithDefaults });
     
@@ -207,6 +208,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
+  const addNovel = (novel: NovelCartItem) => {
+    dispatch({ type: 'ADD_ITEM', payload: novel });
+    
+    setToast({
+      message: `"${novel.title}" agregada al carrito`,
+      type: 'success',
+      isVisible: true
+    });
+  };
   const removeItem = (id: number) => {
     const item = state.items.find(item => item.id === id);
     dispatch({ type: 'REMOVE_ITEM', payload: id });
@@ -238,7 +248,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const getItemSeasons = (id: number): number[] => {
     const item = state.items.find(item => item.id === id);
-    return item?.selectedSeasons || [];
+    return (item && 'selectedSeasons' in item) ? item.selectedSeasons || [] : [];
   };
 
   const getItemPaymentType = (id: number): 'cash' | 'transfer' => {
@@ -250,16 +260,22 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     return currentPrices;
   };
 
-  const calculateItemPrice = (item: SeriesCartItem): number => {
+  const calculateItemPrice = (item: SeriesCartItem | NovelCartItem): number => {
     const moviePrice = currentPrices.moviePrice;
     const seriesPrice = currentPrices.seriesPrice;
+    const novelPricePerChapter = currentPrices.novelPricePerChapter;
     const transferFeePercentage = currentPrices.transferFeePercentage;
     
-    if (item.type === 'movie') {
+    if (item.type === 'novel') {
+      const novelItem = item as NovelCartItem;
+      const basePrice = novelItem.chapters * novelPricePerChapter;
+      return item.paymentType === 'transfer' ? Math.round(basePrice * (1 + transferFeePercentage / 100)) : basePrice;
+    } else if (item.type === 'movie') {
       const basePrice = moviePrice;
       return item.paymentType === 'transfer' ? Math.round(basePrice * (1 + transferFeePercentage / 100)) : basePrice;
     } else {
-      const seasons = item.selectedSeasons?.length || 1;
+      const seriesItem = item as SeriesCartItem;
+      const seasons = seriesItem.selectedSeasons?.length || 1;
       const basePrice = seasons * seriesPrice;
       return item.paymentType === 'transfer' ? Math.round(basePrice * (1 + transferFeePercentage / 100)) : basePrice;
     }
@@ -274,10 +290,21 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const calculateTotalByPaymentType = (): { cash: number; transfer: number } => {
     const moviePrice = currentPrices.moviePrice;
     const seriesPrice = currentPrices.seriesPrice;
+    const novelPricePerChapter = currentPrices.novelPricePerChapter;
     const transferFeePercentage = currentPrices.transferFeePercentage;
     
     return state.items.reduce((totals, item) => {
-      const basePrice = item.type === 'movie' ? moviePrice : (item.selectedSeasons?.length || 1) * seriesPrice;
+      let basePrice: number;
+      if (item.type === 'novel') {
+        const novelItem = item as NovelCartItem;
+        basePrice = novelItem.chapters * novelPricePerChapter;
+      } else if (item.type === 'movie') {
+        basePrice = moviePrice;
+      } else {
+        const seriesItem = item as SeriesCartItem;
+        basePrice = (seriesItem.selectedSeasons?.length || 1) * seriesPrice;
+      }
+      
       if (item.paymentType === 'transfer') {
         totals.transfer += Math.round(basePrice * (1 + transferFeePercentage / 100));
       } else {
@@ -295,6 +322,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     <CartContext.Provider value={{ 
       state, 
       addItem, 
+      addNovel,
       removeItem, 
       updateSeasons, 
       updatePaymentType,

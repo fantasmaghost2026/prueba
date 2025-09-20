@@ -139,6 +139,21 @@ export interface CartItem {
   genre_ids?: number[];
 }
 
+export interface NovelCartItem {
+  id: number;
+  title: string;
+  type: 'novel';
+  genre: string;
+  chapters: number;
+  year: number;
+  description?: string;
+  paymentType: 'cash' | 'transfer';
+  pricePerChapter: number;
+  totalPrice: number;
+}
+
+export type AllCartItems = CartItem | NovelCartItem;
+
 export interface APIResponse<T> {
   page: number;
   results: T[];

@@ -14,24 +14,199 @@ const EMBEDDED_CONFIG = {
   "deliveryZones": [
     {
       "id": 1,
-      "name": "Santiago de Cuba > Santiago de Cuba > Centro Histórico",
-      "cost": 50,
+      "name": "Santiago de Cuba > Vista Hermosa",
+      "cost": 400,
       "createdAt": "2025-01-01T00:00:00.000Z",
-      "updatedAt": "2025-01-01T00:00:00.000Z"
+      "updatedAt": "2025-09-17T09:20:53.160Z"
     },
     {
       "id": 2,
-      "name": "Santiago de Cuba > Santiago de Cuba > Vista Alegre",
-      "cost": 30,
+      "name": "Santiago de Cuba > Antonio Maceo",
+      "cost": 400,
       "createdAt": "2025-01-01T00:00:00.000Z",
-      "updatedAt": "2025-01-01T00:00:00.000Z"
+      "updatedAt": "2025-09-17T09:21:05.888Z"
     },
     {
       "id": 3,
-      "name": "Santiago de Cuba > Santiago de Cuba > Reparto Sueño",
-      "cost": 40,
+      "name": "Santiago de Cuba > Centro de la ciudad",
+      "cost": 250,
       "createdAt": "2025-01-01T00:00:00.000Z",
-      "updatedAt": "2025-01-01T00:00:00.000Z"
+      "updatedAt": "2025-09-17T09:21:30.455Z"
+    },
+    {
+      "name": "Santiago de Cuba > Versalles Hasta el Hotel",
+      "cost": 500,
+      "id": 1758100929096,
+      "createdAt": "2025-09-17T09:22:09.096Z",
+      "updatedAt": "2025-09-17T09:22:09.096Z"
+    },
+    {
+      "name": "Santiago de Cuba > Carretera del Morro",
+      "cost": 300,
+      "id": 1758100944200,
+      "createdAt": "2025-09-17T09:22:24.200Z",
+      "updatedAt": "2025-09-17T09:22:24.200Z"
+    },
+    {
+      "name": "Santiago de Cuba > Altamira",
+      "cost": 400,
+      "id": 1758100965751,
+      "createdAt": "2025-09-17T09:22:45.751Z",
+      "updatedAt": "2025-09-17T09:22:45.751Z"
+    },
+    {
+      "name": "Santiago de Cuba > Cangrejitos",
+      "cost": 350,
+      "id": 1758100993856,
+      "createdAt": "2025-09-17T09:23:13.856Z",
+      "updatedAt": "2025-09-17T09:23:13.856Z"
+    },
+    {
+      "name": "Santiago de Cuba > Trocha",
+      "cost": 250,
+      "id": 1758101017063,
+      "createdAt": "2025-09-17T09:23:37.063Z",
+      "updatedAt": "2025-09-17T09:23:37.063Z"
+    },
+    {
+      "name": "Santiago de Cuba > Veguita de Galo",
+      "cost": 300,
+      "id": 1758101035400,
+      "createdAt": "2025-09-17T09:23:55.400Z",
+      "updatedAt": "2025-09-17T09:23:55.400Z"
+    },
+    {
+      "name": "Santiago de Cuba > Plaza de Martes",
+      "cost": 250,
+      "id": 1758101052903,
+      "createdAt": "2025-09-17T09:24:12.903Z",
+      "updatedAt": "2025-09-17T09:24:12.903Z"
+    },
+    {
+      "name": "Santiago de Cuba > Portuondo",
+      "cost": 300,
+      "id": 1758101091183,
+      "createdAt": "2025-09-17T09:24:51.183Z",
+      "updatedAt": "2025-09-17T09:24:51.183Z"
+    },
+    {
+      "name": "Santiago de Cuba > Sta Barbara",
+      "cost": 300,
+      "id": 1758101134159,
+      "createdAt": "2025-09-17T09:25:34.159Z",
+      "updatedAt": "2025-09-17T09:25:34.159Z"
+    },
+    {
+      "name": "Santiago de Cuba > Sueño",
+      "cost": 250,
+      "id": 1758101147999,
+      "createdAt": "2025-09-17T09:25:47.999Z",
+      "updatedAt": "2025-09-17T09:25:47.999Z"
+    },
+    {
+      "name": "Santiago de Cuba > San Pedrito",
+      "cost": 150,
+      "id": 1758101195423,
+      "createdAt": "2025-09-17T09:26:35.423Z",
+      "updatedAt": "2025-09-17T09:28:10.297Z"
+    },
+    {
+      "name": "Santiago de Cuba > Agüero",
+      "cost": 100,
+      "id": 1758101214991,
+      "createdAt": "2025-09-17T09:26:54.991Z",
+      "updatedAt": "2025-09-17T09:26:54.991Z"
+    },
+    {
+      "name": "Santiago de Cuba > Distrito Jose Martí",
+      "cost": 150,
+      "id": 1758101231864,
+      "createdAt": "2025-09-17T09:27:11.864Z",
+      "updatedAt": "2025-09-17T09:27:11.864Z"
+    },
+    {
+      "name": "Santiago de Cuba > Los Pinos",
+      "cost": 200,
+      "id": 1758101271623,
+      "createdAt": "2025-09-17T09:27:51.623Z",
+      "updatedAt": "2025-09-17T09:27:51.623Z"
+    },
+    {
+      "name": "Santiago de Cuba > Quintero",
+      "cost": 500,
+      "id": 1758101326983,
+      "createdAt": "2025-09-17T09:28:46.983Z",
+      "updatedAt": "2025-09-17T09:28:46.983Z"
+    },
+    {
+      "name": "Santiago de Cuba > 30 de noviembre bajo",
+      "cost": 400,
+      "id": 1758101359671,
+      "createdAt": "2025-09-17T09:29:19.671Z",
+      "updatedAt": "2025-09-17T09:29:19.671Z"
+    },
+    {
+      "name": "Santiago de Cuba > Rajayoga",
+      "cost": 600,
+      "id": 1758101371199,
+      "createdAt": "2025-09-17T09:29:31.199Z",
+      "updatedAt": "2025-09-17T09:29:31.199Z"
+    },
+    {
+      "name": "Santiago de Cuba > Pastorita",
+      "cost": 600,
+      "id": 1758101381527,
+      "createdAt": "2025-09-17T09:29:41.527Z",
+      "updatedAt": "2025-09-17T09:29:41.527Z"
+    },
+    {
+      "name": "Santiago de Cuba > Vista Alegre",
+      "cost": 300,
+      "id": 1758101392543,
+      "createdAt": "2025-09-17T09:29:52.543Z",
+      "updatedAt": "2025-09-17T09:29:52.543Z"
+    },
+    {
+      "name": "Santiago de Cuba > Caney",
+      "cost": 1000,
+      "id": 1758101407935,
+      "createdAt": "2025-09-17T09:30:07.935Z",
+      "updatedAt": "2025-09-17T09:30:07.935Z"
+    },
+    {
+      "name": "Santiago de Cuba > Nuevo Vista Alegre",
+      "cost": 100,
+      "id": 1758101424479,
+      "createdAt": "2025-09-17T09:30:24.479Z",
+      "updatedAt": "2025-09-17T09:30:24.479Z"
+    },
+    {
+      "name": "Santiago de Cuba > Marimón",
+      "cost": 100,
+      "id": 1758101435703,
+      "createdAt": "2025-09-17T09:30:35.703Z",
+      "updatedAt": "2025-09-17T09:30:35.703Z"
+    },
+    {
+      "name": "Santiago de Cuba > Versalle Edificios",
+      "cost": 800,
+      "id": 1758101461055,
+      "createdAt": "2025-09-17T09:31:01.055Z",
+      "updatedAt": "2025-09-17T09:31:01.055Z"
+    },
+    {
+      "name": "Santiago de Cuba > Ferreiro",
+      "cost": 300,
+      "id": 1758101481079,
+      "createdAt": "2025-09-17T09:31:21.079Z",
+      "updatedAt": "2025-09-17T09:31:21.079Z"
+    },
+    {
+      "name": "Santiago de Cuba > 30 de noviembre altos",
+      "cost": 500,
+      "id": 1758101546055,
+      "createdAt": "2025-09-17T09:32:26.055Z",
+      "updatedAt": "2025-09-17T09:32:26.055Z"
     }
   ],
   "novels": [
