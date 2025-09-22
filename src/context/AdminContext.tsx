@@ -6,7 +6,7 @@ const EMBEDDED_CONFIG = {
   "version": "2.1.0",
   "lastExport": "2025-09-05T08:44:06.529Z",
   "prices": {
-    "moviePrice": 80,
+    "moviePrice": 100,
     "seriesPrice": 300,
     "transferFeePercentage": 10,
     "novelPricePerChapter": 5
@@ -212,53 +212,93 @@ const EMBEDDED_CONFIG = {
   "novels": [
     {
       "id": 1,
-      "titulo": "La Casa de Papel",
-      "genero": "Drama",
-      "capitulos": 41,
-      "año": 2017,
-      "descripcion": "Un grupo de ladrones lleva a cabo el atraco perfecto a la Fábrica Nacional de Moneda y Timbre.",
+      "titulo": "El Turco",
+      "genero": "Acción, Drama y Romance",
+      "capitulos": 6,
+      "año": 2025,
+      "descripcion": "Balaban, un soldado del ejército jenízaro, se va a vivir a Moena, en el norte de Italia, después de la Batalla de Viena en 1683 y lucha por los derechos de la gente local.",
       "createdAt": "2025-01-01T00:00:00.000Z",
-      "updatedAt": "2025-01-01T00:00:00.000Z"
+      "updatedAt": "2025-09-20T07:35:27.323Z"
     },
     {
       "id": 2,
-      "titulo": "Elite",
-      "genero": "Drama",
-      "capitulos": 64,
-      "año": 2018,
-      "descripcion": "Las vidas de tres estudiantes de clase trabajadora cambian cuando ingresan a una escuela privada exclusiva.",
+      "titulo": "Holding",
+      "genero": "Familia, Drama",
+      "capitulos": 20,
+      "año": 2024,
+      "descripcion": "Aydan, campeona de apnea, se incorpora a una poderosa empresa familiar. Su presencia saca a la luz oscuros secretos y luchas de poder. Debe sortear la influencia corruptora de la riqueza sin dejar de ser fiel a sí misma.",
       "createdAt": "2025-01-01T00:00:00.000Z",
-      "updatedAt": "2025-01-01T00:00:00.000Z"
+      "updatedAt": "2025-09-20T07:38:27.922Z"
     },
     {
       "id": 3,
-      "titulo": "Vis a Vis",
-      "genero": "Drama",
-      "capitulos": 40,
-      "año": 2015,
-      "descripcion": "Una joven inocente es enviada a prisión donde debe aprender a sobrevivir.",
+      "titulo": "La Realeza ",
+      "genero": "Drama, Comedia",
+      "capitulos": 8,
+      "año": 2025,
+      "descripcion": "Un joven y apuesto príncipe conoce a una chica que dirige el primer hotel de lujo de la India. El encuentro de estos dos mundos, la aristocracia en decadencia y el capitalismo desenfrenado, genera un torbellino de ambición, conflicto y romance.",
       "createdAt": "2025-01-01T00:00:00.000Z",
-      "updatedAt": "2025-01-01T00:00:00.000Z"
+      "updatedAt": "2025-09-20T07:41:35.857Z"
     },
     {
       "id": 4,
-      "titulo": "Narcos",
-      "genero": "Crimen",
+      "titulo": "Valentina, mi amor especial",
+      "genero": "Drama",
       "capitulos": 30,
-      "año": 2015,
-      "descripcion": "La historia del narcotráfico en Colombia y la lucha contra los carteles.",
+      "año": 2024,
+      "descripcion": "La historia de una niña con autismo que se convierte en un genio de la tecnología.",
       "createdAt": "2025-01-01T00:00:00.000Z",
-      "updatedAt": "2025-01-01T00:00:00.000Z"
+      "updatedAt": "2025-09-20T07:41:00.465Z"
     },
     {
       "id": 5,
-      "titulo": "Stranger Things",
-      "genero": "Ciencia Ficción",
-      "capitulos": 42,
-      "año": 2016,
-      "descripcion": "Un grupo de niños descubre fuerzas sobrenaturales y experimentos gubernamentales secretos.",
+      "titulo": "Alaca (Cicatrices del alma)",
+      "genero": "Drama.",
+      "capitulos": 120,
+      "año": 2024,
+      "descripcion": "La vida de una niña se pone patas arriba cuando le roban el riñón durante un violento secuestro, orquestado por su padre biológico rico que necesita un donante.",
       "createdAt": "2025-01-01T00:00:00.000Z",
-      "updatedAt": "2025-01-01T00:00:00.000Z"
+      "updatedAt": "2025-09-21T08:59:08.653Z"
+    },
+    {
+      "titulo": "Viceversa",
+      "genero": "Drama",
+      "capitulos": 80,
+      "año": 2023,
+      "descripcion": "El argumento propuesto por los guionistas Amílcar Salatti, Yoel Infante y María Claudia Figueroa parte de la historia de tres parejas de jóvenes que acuden a un concierto de música electrónica y sufren un accidente, lo que detona sucesos posteriores.",
+      "id": 1758354384106,
+      "createdAt": "2025-09-20T07:46:24.106Z",
+      "updatedAt": "2025-09-20T07:46:24.106Z"
+    },
+    {
+      "titulo": "Amar, Donde El Amor Teje Sus Redes",
+      "genero": "Drama",
+      "capitulos": 90,
+      "año": 2025,
+      "descripcion": "Estrella, una madre soltera, regresa al pequeño pueblo pesquero de su juventud después de la muerte de su padre. Se enamora de Fabián, un padre viudo y enfrenta un huracán de problemas que ponen en riesgo el bienestar de sus familias.",
+      "id": 1758445394324,
+      "createdAt": "2025-09-21T09:03:14.324Z",
+      "updatedAt": "2025-09-21T09:03:14.324Z"
+    },
+    {
+      "titulo": "Amor en blanco y negro",
+      "genero": "Romance",
+      "capitulos": 64,
+      "año": 2017,
+      "descripcion": "Una doctora que dedica su vida a salvar vidas es capturada por un hombre que se dedica a quitarlas.",
+      "id": 1758445503268,
+      "createdAt": "2025-09-21T09:05:03.268Z",
+      "updatedAt": "2025-09-21T09:05:03.268Z"
+    },
+    {
+      "titulo": "Amor Perfecto",
+      "genero": "Drama, Romántica",
+      "capitulos": 60,
+      "año": 2023,
+      "descripcion": "Amor Perfecto cuenta la historia de Marê (Camila Queiroz), una niña rica, estudiante de Administración y Finanzas, que se enamora del joven doctor Orlando (Diogo Almeida). Marê está de novia con Gaspar (Thiago Lacerda) pero dejará de lado los deseos de su padre para vivir ese amor. Sin embargo, la trágica muerte de su progenitor y los manejos de su madrastra para inculparla llevan a Marê a una prisión injusta.",
+      "id": 1758445741890,
+      "createdAt": "2025-09-21T09:09:01.890Z",
+      "updatedAt": "2025-09-21T09:09:01.890Z"
     }
   ],
   "settings": {

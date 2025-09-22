@@ -64,6 +64,10 @@ export function sendOrderToWhatsApp(orderData: OrderData): void {
         ? `\n  📺 Temporadas: ${item.selectedSeasons.sort((a, b) => a - b).join(', ')}` 
         : '';
       
+      const extendedSeriesInfo = item.type === 'tv' && item.episodeCount && item.episodeCount > 50
+        ? `\n  📊 Serie extensa: ${item.episodeCount} episodios totales`
+        : '';
+      
       const novelInfo = item.type === 'novel' 
         ? `\n  📚 Capítulos: ${item.chapters}\n  📖 Género: ${item.genre}` 
         : '';
@@ -83,8 +87,14 @@ export function sendOrderToWhatsApp(orderData: OrderData): void {
       const paymentTypeText = item.paymentType === 'transfer' ? `Transferencia (+${transferFeePercentage}%)` : 'Efectivo';
       const emoji = item.type === 'movie' ? '🎬' : item.type === 'tv' ? '📺' : '📚';
       
-      let itemText = `${emoji} *${item.title}*${seasonInfo}${novelInfo}\n`;
+      let itemText = `${emoji} *${item.title}*${seasonInfo}${extendedSeriesInfo}${novelInfo}\n`;
       itemText += `  📋 Tipo: ${itemType}\n`;
+      
+      // Add extended series pricing explanation
+      if (item.type === 'tv' && item.episodeCount && item.episodeCount > 50) {
+        itemText += `  📊 Serie extensa: ${item.episodeCount} episodios (precio estándar $${currentPrices.seriesPrice} CUP/temporada)\n`;
+      }
+      
       itemText += `  💳 Método de pago: ${paymentTypeText}\n`;
       
       if (item.paymentType === 'transfer') {

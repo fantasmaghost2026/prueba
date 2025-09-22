@@ -162,10 +162,7 @@ export function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-3xl md:text-5xl font-bold mb-6">
             Descubre el Mundo del
-            <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-pink-400 animate-pulse">
-              <span className="absolute inset-0 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-[shimmer_3s_ease-in-out_infinite]">
-                {' '}Entretenimiento
-              </span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-pink-400">
               {' '}Entretenimiento
             </span>
           </h1>

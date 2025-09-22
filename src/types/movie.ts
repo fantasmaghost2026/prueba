@@ -29,6 +29,8 @@ export interface TVShow {
   adult: boolean;
   original_language: string;
   popularity: number;
+  number_of_episodes?: number;
+  number_of_episodes?: number;
 }
 
 export interface MovieDetails extends Movie {

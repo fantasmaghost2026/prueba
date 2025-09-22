@@ -308,6 +308,13 @@ export function Cart() {
                             +{adminContext?.state?.prices?.transferFeePercentage || 10}% incluido
                           </div>
                         )}
+                        {/* Extended series indicator */}
+                        {item.type === 'tv' && 'number_of_episodes' in item && item.number_of_episodes > 50 && (
+                          <div className="inline-flex items-center bg-gradient-to-r from-amber-100 to-orange-100 px-3 py-2 rounded-full border border-amber-300 shadow-sm">
+                            <span className="text-amber-600 mr-1 text-xs">📊</span>
+                            <span className="text-xs font-bold text-amber-700">Serie Extensa</span>
+                          </div>
+                        )}
                       </div>
                     </div>
 

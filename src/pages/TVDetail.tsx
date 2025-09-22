@@ -357,15 +357,77 @@ export function TVDetail() {
                 
                 {/* Episode count warning for series with 50+ episodes */}
                 {tvShow.number_of_episodes > 50 && (
-                  <div className="mt-4 p-3 bg-yellow-100/20 backdrop-blur-sm rounded-lg border border-yellow-300/30">
-                    <div className="flex items-center mb-2">
-                      <span className="text-yellow-300 mr-2">⚠️</span>
-                      <span className="text-sm font-semibold">Información Importante</span>
+                  <div className="mt-4 p-5 bg-gradient-to-r from-amber-50/90 to-orange-50/90 backdrop-blur-md rounded-2xl border-2 border-amber-300/50 shadow-lg">
+                    <div className="flex items-center mb-4">
+                      <div className="bg-gradient-to-r from-amber-500 to-orange-500 p-3 rounded-xl mr-4 shadow-lg">
+                        <span className="text-2xl">📊</span>
+                      </div>
+                      <div>
+                        <h4 className="text-lg font-bold text-amber-900">Información de Precios</h4>
+                        <p className="text-sm text-amber-700 font-medium">Serie con episodios extendidos</p>
+                      </div>
                     </div>
-                    <p className="text-xs text-yellow-100 leading-relaxed">
-                      Esta serie tiene {tvShow.number_of_episodes} episodios. Hasta 50 episodios se contempla como una temporada (${seriesPrice} CUP). 
-                      Para más episodios, contacte con TV a la Carta para información adicional.
-                    </p>
+                    <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-amber-200 shadow-sm">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-3 border border-blue-200">
+                          <div className="flex items-center mb-2">
+                            <span className="text-lg mr-2">📺</span>
+                            <span className="text-sm font-bold text-blue-800">Total de Episodios</span>
+                          </div>
+                          <p className="text-2xl font-black text-blue-900">{tvShow.number_of_episodes}</p>
+                        </div>
+                        <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-3 border border-green-200">
+                          <div className="flex items-center mb-2">
+                            <span className="text-lg mr-2">💰</span>
+                            <span className="text-sm font-bold text-green-800">Precio por Temporada</span>
+                          </div>
+                          <p className="text-2xl font-black text-green-900">${seriesPrice.toLocaleString()} CUP</p>
+                        </div>
+                      </div>
+                      
+                      <div className="bg-gradient-to-r from-amber-100 to-orange-100 rounded-xl p-4 border-2 border-amber-300 shadow-md">
+                        <div className="flex items-center mb-3">
+                          <div className="bg-amber-500 p-2 rounded-lg mr-3 shadow-sm">
+                            <span className="text-white text-sm font-bold">ℹ️</span>
+                          </div>
+                          <h5 className="text-base font-bold text-amber-900">Política de Precios para Series Extensas</h5>
+                        </div>
+                        <div className="space-y-3 text-sm text-amber-800 leading-relaxed">
+                          <div className="flex items-start">
+                            <span className="text-green-600 mr-2 mt-0.5">✅</span>
+                            <p><strong>Hasta 50 episodios:</strong> Se considera como 1 temporada completa</p>
+                          </div>
+                          <div className="flex items-start">
+                            <span className="text-blue-600 mr-2 mt-0.5">📋</span>
+                            <p><strong>Más de 50 episodios:</strong> Cada temporada mantiene el precio estándar de <strong>${seriesPrice.toLocaleString()} CUP</strong></p>
+                          </div>
+                          <div className="flex items-start">
+                            <span className="text-purple-600 mr-2 mt-0.5">🎯</span>
+                            <p><strong>Precio justo:</strong> Pagas solo por las temporadas que selecciones, sin costos adicionales</p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="mt-4 bg-gradient-to-r from-green-100 to-blue-100 rounded-xl p-4 border-2 border-green-300">
+                        <div className="text-center">
+                          <p className="text-sm font-bold text-green-800 mb-2">💡 Ejemplo de Cálculo para esta Serie:</p>
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                            <div className="bg-white rounded-lg p-2 border border-green-200">
+                              <p className="font-bold text-green-700">1 Temporada</p>
+                              <p className="text-green-900">${seriesPrice.toLocaleString()} CUP</p>
+                            </div>
+                            <div className="bg-white rounded-lg p-2 border border-blue-200">
+                              <p className="font-bold text-blue-700">2 Temporadas</p>
+                              <p className="text-blue-900">${(seriesPrice * 2).toLocaleString()} CUP</p>
+                            </div>
+                            <div className="bg-white rounded-lg p-2 border border-purple-200">
+                              <p className="font-bold text-purple-700">Todas ({tvShow.number_of_seasons})</p>
+                              <p className="text-purple-900">${(seriesPrice * tvShow.number_of_seasons).toLocaleString()} CUP</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>

@@ -130,6 +130,28 @@ export function MovieCard({ item, type }: MovieCardProps) {
             {item.overview || 'Sin descripción disponible'}
           </p>
           
+          {/* Episode count information for TV shows with 50+ episodes */}
+          {type === 'tv' && 'number_of_episodes' in item && item.number_of_episodes > 50 && (
+            <div className="mb-4 p-3 bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl border-2 border-amber-200 shadow-sm">
+              <div className="flex items-center mb-2">
+                <div className="bg-amber-500 p-1.5 rounded-lg mr-2 shadow-sm">
+                  <span className="text-white text-xs font-bold">📊</span>
+                </div>
+                <span className="text-xs font-bold text-amber-800">Serie Extensa</span>
+              </div>
+              <div className="space-y-1 text-xs text-amber-700">
+                <p className="flex items-center">
+                  <span className="text-blue-600 mr-1">📺</span>
+                  <strong>{item.number_of_episodes} episodios</strong>
+                </p>
+                <p className="flex items-center">
+                  <span className="text-green-600 mr-1">💰</span>
+                  <strong>$300 CUP por temporada</strong>
+                </p>
+              </div>
+            </div>
+          )}
+          
           {/* Very subtle progress bar for rating */}
           <div className="w-full bg-gray-200 rounded-full h-1 mb-4 overflow-hidden">
             <div 
