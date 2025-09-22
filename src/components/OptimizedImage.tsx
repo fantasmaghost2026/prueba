@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { platformDetectionService } from '../utils/platformDetection';
 
 interface OptimizedImageProps {
   src: string;
@@ -22,11 +23,45 @@ export function OptimizedImage({
   const [imageSrc, setImageSrc] = useState(lazy ? '' : src);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
+  const [optimizedSrc, setOptimizedSrc] = useState('');
   const imgRef = useRef<HTMLImageElement>(null);
+
+  // Optimizar imagen según la plataforma
+  useEffect(() => {
+    const platform = platformDetectionService.getPlatformInfo();
+    const settings = platformDetectionService.getOptimizedSettings();
+    
+    let optimized = src;
+    
+    // Aplicar optimizaciones según la plataforma
+    if (src.includes('image.tmdb.org') || src.includes('images.unsplash.com')) {
+      const separator = src.includes('?') ? '&' : '?';
+      
+      // Ajustar calidad según el dispositivo y conexión
+      optimized += `${separator}q=${settings.imageQuality}`;
+      
+      // Usar WebP si está soportado
+      if (settings.useWebP && platform.supportsWebP) {
+        optimized += '&fm=webp';
+      }
+      
+      // Ajustar tamaño para dispositivos de alta densidad
+      if (platform.pixelRatio > 1) {
+        optimized += `&dpr=${Math.min(platform.pixelRatio, 3)}`;
+      }
+      
+      // Optimizaciones específicas para móviles
+      if (platform.isMobile) {
+        optimized += '&fit=crop&crop=smart';
+      }
+    }
+    
+    setOptimizedSrc(optimized);
+  }, [src]);
 
   useEffect(() => {
     if (!lazy) {
-      setImageSrc(src);
+      setImageSrc(optimizedSrc || src);
       return;
     }
 
@@ -34,12 +69,15 @@ export function OptimizedImage({
       (entries) => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
-            setImageSrc(src);
+            setImageSrc(optimizedSrc || src);
             observer.unobserve(entry.target);
           }
         });
       },
-      { threshold: 0.1 }
+      { 
+        threshold: 0.1,
+        rootMargin: '50px' // Precargar imágenes un poco antes
+      }
     );
 
     if (imgRef.current) {
@@ -47,7 +85,7 @@ export function OptimizedImage({
     }
 
     return () => observer.disconnect();
-  }, [src, lazy]);
+  }, [optimizedSrc, src, lazy]);
 
   const handleLoad = () => {
     setIsLoading(false);

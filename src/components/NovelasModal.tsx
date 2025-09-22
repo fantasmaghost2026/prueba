@@ -341,10 +341,59 @@ export function NovelasModal({ isOpen, onClose, onFinalizePedido }: NovelasModal
   };
 
   const handleWhatsApp = () => {
+    // Detectar plataforma para optimizar WhatsApp
+    const detectPlatform = () => {
+      const userAgent = navigator.userAgent.toLowerCase();
+      const isMobile = /android|webos|iphone|ipod|blackberry|iemobile|opera mini/i.test(userAgent) || window.innerWidth <= 768;
+      const isTablet = /ipad|tablet|kindle|silk|playbook/i.test(userAgent) || (window.innerWidth > 768 && window.innerWidth <= 1024 && 'ontouchstart' in window);
+      const isIOS = /iphone|ipad|ipod/i.test(userAgent);
+      const isAndroid = /android/i.test(userAgent);
+      
+      return { isMobile, isTablet, isIOS, isAndroid, isDesktop: !isMobile && !isTablet };
+    };
+
+    const platform = detectPlatform();
     const message = "📚 *Solicitar novelas*\n\n¿Hay novelas que me gustaría ver en [TV a la Carta] a continuación te comento:";
+    const phoneNumber = '5354690878';
     const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/5354690878?text=${encodedMessage}`;
-    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+    
+    // URLs optimizadas por plataforma
+    let whatsappUrl: string;
+    
+    if (platform.isMobile) {
+      // Para móviles, intentar app nativa primero
+      whatsappUrl = `whatsapp://send?phone=${phoneNumber}&text=${encodedMessage}`;
+      
+      // Fallback a web si la app no está disponible
+      const fallbackUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+      
+      try {
+        const iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        iframe.src = whatsappUrl;
+        document.body.appendChild(iframe);
+        
+        setTimeout(() => {
+          document.body.removeChild(iframe);
+          if (document.visibilityState === 'visible') {
+            window.open(fallbackUrl, '_blank', 'noopener,noreferrer');
+          }
+        }, 2000);
+        
+        return;
+      } catch (error) {
+        window.open(fallbackUrl, '_blank', 'noopener,noreferrer');
+        return;
+      }
+    } else if (platform.isTablet) {
+      // Para tablets, usar web preferentemente
+      whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+    } else {
+      // Para escritorio, usar WhatsApp Web
+      whatsappUrl = `https://web.whatsapp.com/send?phone=${phoneNumber}&text=${encodedMessage}`;
+    }
+    
+    window.open(whatsappUrl, '_blank', 'noopener,noreferrer,width=800,height=600');
   };
 
   if (!isOpen) return null;
