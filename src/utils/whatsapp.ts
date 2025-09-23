@@ -1,5 +1,4 @@
 import { OrderData, CustomerInfo } from '../components/CheckoutModal';
-import { universalWhatsAppService } from './universalWhatsApp';
 
 export function sendOrderToWhatsApp(orderData: OrderData): void {
   const { 
@@ -70,7 +69,7 @@ export function sendOrderToWhatsApp(orderData: OrderData): void {
         : '';
       
       const novelInfo = item.type === 'novel' 
-        ? `\n  📚 Capítulos: ${item.chapters}\n  📖 Género: ${item.genre}` 
+        ? `\n  📚 Capítulos: ${item.chapters}\n  📖 Género: ${item.genre}\n  🌍 País: ${item.country || 'No especificado'}\n  📡 Estado: ${item.status === 'transmision' ? 'En Transmisión' : 'Finalizada'}` 
         : '';
       
       const itemType = item.type === 'movie' ? 'Película' : item.type === 'tv' ? 'Serie' : 'Novela';
@@ -237,14 +236,9 @@ export function sendOrderToWhatsApp(orderData: OrderData): void {
   })}\n`;
   message += `🌟 *¡Gracias por elegir TV a la Carta!*`;
   
+  const encodedMessage = encodeURIComponent(message);
   const phoneNumber = '5354690878'; // Número de WhatsApp
+  const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
   
-  // Usar el servicio universal mejorado para abrir WhatsApp
-  universalWhatsAppService.sendMessage(phoneNumber, message).then(success => {
-    if (!success) {
-      console.warn('WhatsApp could not be opened automatically');
-    }
-  }).catch(error => {
-    console.error('Error sending WhatsApp message:', error);
-  });
+  window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
 }

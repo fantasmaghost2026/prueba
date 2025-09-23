@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Search, Filter } from 'lucide-react';
 import { tmdbService } from '../services/tmdb';
+import { useAdmin } from '../context/AdminContext';
 import { performanceOptimizer } from '../utils/performance';
 import { MovieCard } from '../components/MovieCard';
+import { NovelCard } from '../components/NovelCard';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { ErrorMessage } from '../components/ErrorMessage';
 import type { Movie, TVShow } from '../types/movie';
@@ -12,7 +14,9 @@ type SearchType = 'all' | 'movie' | 'tv';
 
 export function SearchPage() {
   const [searchParams] = useSearchParams();
+  const { state: adminState } = useAdmin();
   const [results, setResults] = useState<(Movie | TVShow)[]>([]);
+  const [novelResults, setNovelResults] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searchType, setSearchType] = useState<SearchType>('all');
@@ -33,6 +37,15 @@ export function SearchPage() {
 
     try {
       if (!append) setLoading(true);
+      
+      // Search novels first
+      const novelMatches = adminState.novels?.filter(novel =>
+        novel.titulo.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        novel.genero.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (novel.pais && novel.pais.toLowerCase().includes(searchQuery.toLowerCase()))
+      ) || [];
+      
+      setNovelResults(novelMatches);
       
       let response;
       switch (type) {
@@ -177,21 +190,43 @@ export function SearchPage() {
         {error && results.length === 0 && <ErrorMessage message={error} />}
 
         {/* No Results */}
-        {!loading && !error && results.length === 0 && query && (
+        {!loading && !error && results.length === 0 && novelResults.length === 0 && query && (
           <div className="text-center py-12">
             <Search className="h-16 w-16 text-gray-400 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-900 mb-2">
               No se encontraron resultados
             </h3>
             <p className="text-gray-600">
-              Intenta con otros términos de búsqueda o explora nuestro catálogo.
+              Intenta con otros términos de búsqueda o explora nuestro catálogo de películas, series y novelas.
             </p>
           </div>
         )}
 
         {/* Results Grid */}
-        {results.length > 0 && (
+        {(results.length > 0 || novelResults.length > 0) && (
           <>
+            {/* Novel Results */}
+            {novelResults.length > 0 && (
+              <div className="mb-8">
+                <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                  <span className="mr-2">📚</span>
+                  Novelas ({novelResults.length})
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mb-6">
+                  {novelResults.map((novel) => (
+                    <NovelCard key={`novel-${novel.id}`} novel={novel} />
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {/* Movies and TV Shows */}
+            <div className="mb-4">
+              <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                <span className="mr-2">🎬</span>
+                Películas y Series ({results.length})
+              </h2>
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mb-8">
               {results.map((item) => (
                 <MovieCard

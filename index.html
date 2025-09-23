@@ -3,13 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/unnamed.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="theme-color" content="#1e40af" />
-    <meta name="msapplication-TileColor" content="#1e40af" />
-    <meta name="format-detection" content="telephone=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
     <base href="/" />
     <title>TV a la Carta: Películas y series ilimitadas y mucho más</title>
     <style>
@@ -21,8 +15,6 @@
         user-select: none;
         -webkit-touch-callout: none;
         -webkit-tap-highlight-color: transparent;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
       }
       
       /* Permitir selección de texto solo en inputs y textareas */
@@ -39,8 +31,6 @@
         -ms-text-size-adjust: 100%;
         text-size-adjust: 100%;
         touch-action: manipulation;
-        overscroll-behavior: none;
-        -webkit-overflow-scrolling: touch;
       }
       
       /* Prevenir zoom en inputs en iOS */
@@ -56,45 +46,6 @@
         -webkit-appearance: none;
         -moz-appearance: none;
         appearance: none;
-        border-radius: 0;
-      }
-      
-      /* Optimizaciones para diferentes navegadores */
-      @supports (-webkit-touch-callout: none) {
-        /* Safari iOS */
-        body {
-          -webkit-user-select: none;
-          -webkit-touch-callout: none;
-        }
-      }
-      
-      @supports (-moz-appearance: none) {
-        /* Firefox */
-        input, select, textarea {
-          -moz-appearance: none;
-        }
-      }
-      
-      @supports (-ms-ime-align: auto) {
-        /* Edge/IE */
-        input, select, textarea {
-          -ms-touch-action: manipulation;
-        }
-      }
-      
-      /* Optimizaciones para Chrome en Android */
-      @media screen and (-webkit-min-device-pixel-ratio: 0) {
-        input, select, textarea {
-          background-clip: padding-box;
-        }
-      }
-      
-      /* Soporte para notch en dispositivos modernos */
-      @supports (padding: max(0px)) {
-        body {
-          padding-left: max(12px, env(safe-area-inset-left));
-          padding-right: max(12px, env(safe-area-inset-right));
-        }
       }
     </style>
   </head>

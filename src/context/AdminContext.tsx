@@ -344,6 +344,9 @@ export interface Novel {
   capitulos: number;
   año: number;
   descripcion?: string;
+  pais?: string;
+  imagen?: string;
+  estado?: 'transmision' | 'finalizada';
   createdAt: string;
   updatedAt: string;
 }

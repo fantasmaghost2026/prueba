@@ -18,24 +18,7 @@ export function MovieCard({ item, type }: MovieCardProps) {
   const [toastMessage, setToastMessage] = React.useState('');
   const [isHovered, setIsHovered] = React.useState(false);
   const [isAddingToCart, setIsAddingToCart] = React.useState(false);
-  const [isTouchDevice, setIsTouchDevice] = React.useState(false);
   
-  // Detectar dispositivo táctil
-  React.useEffect(() => {
-    const checkTouchDevice = () => {
-      const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-      const isMobile = /android|webos|iphone|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent.toLowerCase());
-      setIsTouchDevice(hasTouch || isMobile);
-    };
-
-    checkTouchDevice();
-    window.addEventListener('resize', checkTouchDevice);
-
-    return () => {
-      window.removeEventListener('resize', checkTouchDevice);
-    };
-  }, []);
-
   const title = 'title' in item ? item.title : item.name;
   const releaseDate = 'release_date' in item ? item.release_date : item.first_air_date;
   const year = releaseDate ? new Date(releaseDate).getFullYear() : 'N/A';
@@ -80,15 +63,13 @@ export function MovieCard({ item, type }: MovieCardProps) {
   return (
     <>
       <div 
-        className={`group relative bg-white rounded-xl shadow-sm overflow-hidden transition-all duration-200 transform touch-target ${
+        className={`group relative bg-white rounded-xl shadow-sm overflow-hidden transition-all duration-200 transform ${
           isHovered 
             ? 'shadow-md scale-[1.01] -translate-y-0.5' 
             : 'hover:shadow-md'
-        } ${isTouchDevice ? 'active:scale-95' : ''}`}
-        onMouseEnter={() => !isTouchDevice && setIsHovered(true)}
-        onMouseLeave={() => !isTouchDevice && setIsHovered(false)}
-        onTouchStart={() => isTouchDevice && setIsHovered(true)}
-        onTouchEnd={() => isTouchDevice && setTimeout(() => setIsHovered(false), 150)}
+        }`}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
       >
         {/* Subtle border effect */}
         <div className={`absolute inset-0 rounded-xl border-2 transition-all duration-200 ${
@@ -187,11 +168,11 @@ export function MovieCard({ item, type }: MovieCardProps) {
           <button
             onClick={handleCartAction}
             disabled={isAddingToCart}
-            className={`w-full px-4 py-3 rounded-lg font-medium transition-all duration-200 transform relative overflow-hidden touch-target ${
+            className={`w-full px-4 py-3 rounded-lg font-medium transition-all duration-200 transform relative overflow-hidden ${
               inCart
                 ? 'bg-green-500 hover:bg-green-600 text-white shadow-sm'
                 : 'bg-blue-500 hover:bg-blue-600 text-white hover:shadow-md'
-            } ${isAddingToCart ? 'scale-95' : 'hover:scale-[1.01]'} ${isTouchDevice ? 'active:scale-95' : ''}`}
+            } ${isAddingToCart ? 'scale-95' : 'hover:scale-[1.01]'}`}
           >
             {/* Subtle loading effect */}
             {isAddingToCart && (
@@ -222,7 +203,7 @@ export function MovieCard({ item, type }: MovieCardProps) {
           {/* View Details Link */}
           <Link
             to={`/${type}/${item.id}`}
-            className={`w-full mt-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 border border-gray-300 text-gray-600 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 flex items-center justify-center touch-target ${isTouchDevice ? 'active:bg-blue-100' : ''}`}
+            className="w-full mt-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 border border-gray-300 text-gray-600 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 flex items-center justify-center"
           >
             <Eye className="mr-2 h-4 w-4" />
             Ver Detalles

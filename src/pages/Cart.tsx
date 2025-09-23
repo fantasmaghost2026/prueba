@@ -215,6 +215,16 @@ export function Cart() {
                         <span className="inline-block bg-gradient-to-r from-pink-100 to-purple-100 text-pink-700 px-4 py-2 rounded-full text-sm font-semibold border border-pink-200 shadow-sm">
                           <BookOpen className="h-4 w-4 inline mr-2" />
                           {(item as NovelCartItem).chapters} capítulos • {(item as NovelCartItem).genre}
+                          {(item as NovelCartItem).country && (
+                            <span className="ml-2">• {(item as NovelCartItem).country}</span>
+                          )}
+                          {(item as NovelCartItem).status && (
+                            <span className={`ml-2 ${
+                              (item as NovelCartItem).status === 'transmision' ? 'text-red-600' : 'text-green-600'
+                            }`}>
+                              • {(item as NovelCartItem).status === 'transmision' ? '📡 En Transmisión' : '✅ Finalizada'}
+                            </span>
+                          )}
                         </span>
                       </div>
                     )}
@@ -438,7 +448,7 @@ export function Cart() {
                             ` • Temporadas: ${item.selectedSeasons.sort((a, b) => a - b).join(', ')}`
                           }
                           {item.type === 'novel' && 
-                            ` • ${(item as NovelCartItem).chapters} capítulos • ${(item as NovelCartItem).genre}`
+                            ` • ${(item as NovelCartItem).chapters} capítulos • ${(item as NovelCartItem).genre}${(item as NovelCartItem).country ? ` • ${(item as NovelCartItem).country}` : ''}${(item as NovelCartItem).status ? ` • ${(item as NovelCartItem).status === 'transmision' ? 'En Transmisión' : 'Finalizada'}` : ''}`
                           }
                           {isAnime(item) && ' • Anime'}
                         </p>
