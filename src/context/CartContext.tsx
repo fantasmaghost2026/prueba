@@ -113,7 +113,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   // Listen for admin price updates
   useEffect(() => {
     const handleAdminStateChange = (event: CustomEvent) => {
-      if (event.detail.type === 'prices') {
+      if (event.detail.type === 'prices' && event.detail.data) {
         setCurrentPrices(event.detail.data);
       }
     };
@@ -122,18 +122,40 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       if (event.detail.config?.prices) {
         setCurrentPrices(event.detail.config.prices);
       }
+      // También escuchar cambios en el estado del admin
+      if (event.detail.state?.prices) {
+        setCurrentPrices(event.detail.state.prices);
+      }
+    };
+
+    // Escuchar actualizaciones directas del estado del admin
+    const handleAdminStateUpdate = (event: CustomEvent) => {
+      if (event.detail.prices) {
+        setCurrentPrices(event.detail.prices);
+      }
     };
 
     window.addEventListener('admin_state_change', handleAdminStateChange as EventListener);
     window.addEventListener('admin_full_sync', handleAdminFullSync as EventListener);
+    window.addEventListener('admin_state_update', handleAdminStateUpdate as EventListener);
 
-    // Check for stored admin config
+    // Cargar precios desde el estado del admin al inicializar
     try {
-      const adminConfig = localStorage.getItem('system_config');
-      if (adminConfig) {
-        const config = JSON.parse(adminConfig);
-        if (config.prices) {
-          setCurrentPrices(config.prices);
+      // Primero intentar desde el estado del admin
+      const adminStateStr = localStorage.getItem('admin_system_state');
+      if (adminStateStr) {
+        const adminState = JSON.parse(adminStateStr);
+        if (adminState.prices) {
+          setCurrentPrices(adminState.prices);
+        }
+      } else {
+        // Fallback al system_config
+        const systemConfig = localStorage.getItem('system_config');
+        if (systemConfig) {
+          const config = JSON.parse(systemConfig);
+          if (config.prices) {
+            setCurrentPrices(config.prices);
+          }
         }
       }
     } catch (error) {
@@ -143,6 +165,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     return () => {
       window.removeEventListener('admin_state_change', handleAdminStateChange as EventListener);
       window.removeEventListener('admin_full_sync', handleAdminFullSync as EventListener);
+      window.removeEventListener('admin_state_update', handleAdminStateUpdate as EventListener);
     };
   }, []);
 
