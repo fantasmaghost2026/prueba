@@ -302,16 +302,16 @@ export function CheckoutModal({ isOpen, onClose, onCheckout, items, total }: Che
                 <p className="text-red-500 text-sm mb-4">{errors.zone}</p>
               )}
               
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 {/* Pickup Option */}
                 <label
-                  className={`group flex items-center justify-between p-6 border-2 rounded-2xl cursor-pointer transition-all duration-300 transform hover:scale-[1.02] ${
+                  className={`group flex flex-col p-4 sm:p-6 border-2 rounded-2xl cursor-pointer transition-all duration-300 transform hover:scale-[1.02] space-y-3 ${
                     selectedZone === 'pickup'
                       ? 'border-green-500 bg-gradient-to-r from-green-50 to-emerald-50 shadow-lg scale-[1.02]'
                       : 'border-gray-300 hover:border-green-400 hover:bg-green-50/50 hover:shadow-md'
                   }`}
                 >
-                  <div className="flex items-center">
+                  <div className="flex items-center w-full">
                     <div className={`mr-4 p-3 rounded-full transition-all duration-300 ${
                       selectedZone === 'pickup'
                         ? 'bg-green-500 text-white shadow-lg'
@@ -325,9 +325,9 @@ export function CheckoutModal({ isOpen, onClose, onCheckout, items, total }: Che
                       value="pickup"
                       checked={selectedZone === 'pickup'}
                       onChange={(e) => handleZoneChange(e.target.value)}
-                      className="mr-4 h-5 w-5 text-green-600 focus:ring-green-500 focus:ring-2"
+                      className="mr-3 sm:mr-4 h-4 w-4 sm:h-5 sm:w-5 text-green-600 focus:ring-green-500 focus:ring-2"
                     />
-                    <div>
+                    <div className="flex-1">
                       <p className={`font-bold text-lg transition-colors ${
                         selectedZone === 'pickup' ? 'text-green-800' : 'text-gray-900 group-hover:text-green-700'
                       }`}>
@@ -345,7 +345,7 @@ export function CheckoutModal({ isOpen, onClose, onCheckout, items, total }: Che
                       </p>
                     </div>
                   </div>
-                  <div className="text-right flex flex-col items-end">
+                  <div className="text-center flex flex-col items-center w-full">
                     <div className={`px-4 py-2 rounded-full font-bold text-lg transition-all duration-300 ${
                       selectedZone === 'pickup'
                         ? 'bg-green-500 text-white shadow-lg'
@@ -360,26 +360,26 @@ export function CheckoutModal({ isOpen, onClose, onCheckout, items, total }: Che
                 {/* Home Delivery Option */}
                 {deliveryZones.length > 0 && (
                   <div className="border-2 border-gray-300 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
-                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 border-b border-gray-300">
-                      <h4 className="font-bold text-blue-900 flex items-center text-sm sm:text-lg">
+                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-3 sm:p-4 border-b border-gray-300">
+                      <h4 className="font-bold text-blue-900 flex items-center text-base sm:text-lg">
                         <div className="bg-blue-500 p-2 rounded-lg mr-3 shadow-sm">
                           <Truck className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
                         </div>
                         Entrega a Domicilio
                       </h4>
-                      <p className="text-xs sm:text-sm text-blue-700 ml-10 sm:ml-12 mt-1">Selecciona tu zona de entrega</p>
+                      <p className="text-sm text-blue-700 ml-10 sm:ml-12 mt-1">Selecciona tu zona de entrega</p>
                     </div>
-                    <div className="max-h-48 sm:max-h-64 overflow-y-auto bg-white">
+                    <div className="max-h-64 sm:max-h-80 overflow-y-auto bg-white">
                       {deliveryZones.map((zone) => (
                         <label
                           key={zone.id}
-                          className={`group flex items-center justify-between p-3 sm:p-5 border-b border-gray-100 last:border-b-0 cursor-pointer transition-all duration-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 ${
+                          className={`group flex flex-col p-3 sm:p-4 border-b border-gray-100 last:border-b-0 cursor-pointer transition-all duration-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 space-y-3 ${
                             selectedZone === zone.name
                               ? 'bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200 shadow-inner'
                               : ''
                           }`}
                         >
-                          <div className="flex items-center">
+                          <div className="flex items-center w-full">
                             <div className={`mr-4 p-2 rounded-full transition-all duration-300 ${
                               selectedZone === zone.name
                                 ? 'bg-blue-500 text-white shadow-lg'
@@ -393,30 +393,30 @@ export function CheckoutModal({ isOpen, onClose, onCheckout, items, total }: Che
                               value={zone.name}
                               checked={selectedZone === zone.name}
                               onChange={(e) => handleZoneChange(e.target.value)}
-                              className="mr-3 sm:mr-4 h-4 w-4 sm:h-5 sm:w-5 text-blue-600 focus:ring-blue-500 focus:ring-2"
+                              className="mr-3 h-4 w-4 sm:h-5 sm:w-5 text-blue-600 focus:ring-blue-500 focus:ring-2"
                             />
-                            <div>
-                              <p className={`font-bold text-sm sm:text-base transition-colors ${
+                            <div className="flex-1">
+                              <p className={`font-bold text-base transition-colors ${
                                 selectedZone === zone.name ? 'text-blue-800' : 'text-gray-900 group-hover:text-blue-700'
                               }`}>
                                 🚚 {zone.name}
                               </p>
-                              <p className={`text-xs sm:text-sm mt-1 transition-colors ${
+                              <p className={`text-sm mt-1 transition-colors ${
                                 selectedZone === zone.name ? 'text-blue-600' : 'text-gray-500 group-hover:text-blue-500'
                               }`}>
                                 ⏰ Entrega en 24-48 horas
                               </p>
                             </div>
                           </div>
-                          <div className="text-right flex flex-col items-end">
-                            <div className={`px-3 sm:px-4 py-1 sm:py-2 rounded-full font-bold text-sm sm:text-base transition-all duration-300 ${
+                          <div className="text-center flex flex-col items-center w-full">
+                            <div className={`px-4 py-2 rounded-full font-bold text-base transition-all duration-300 ${
                               selectedZone === zone.name
                                 ? 'bg-blue-500 text-white shadow-lg'
                                 : 'bg-blue-100 text-blue-700 group-hover:bg-blue-200'
                             }`}>
                               ${zone.cost.toLocaleString()} CUP
                             </div>
-                            <p className="text-xs text-gray-500 mt-1 hidden sm:block">Costo de entrega</p>
+                            <p className="text-xs text-gray-500 mt-1">Costo de entrega</p>
                           </div>
                         </label>
                       ))}
@@ -427,33 +427,33 @@ export function CheckoutModal({ isOpen, onClose, onCheckout, items, total }: Che
 
               {/* Location Map Option */}
               {pickupLocation && (
-                <div className="mt-6 p-3 sm:p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl border-2 border-blue-200 shadow-lg">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between space-y-3 sm:space-y-0">
+                <div className="mt-4 sm:mt-6 p-4 sm:p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl border-2 border-blue-200 shadow-lg">
+                  <div className="flex flex-col space-y-4">
                     <div>
-                      <h4 className="font-bold text-blue-900 text-sm sm:text-lg flex items-center">
+                      <h4 className="font-bold text-blue-900 text-base flex items-center justify-center sm:justify-start">
                         <div className="bg-blue-500 p-2 rounded-lg mr-3 shadow-sm">
-                          <MapPin className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
+                          <MapPin className="h-4 w-4 text-white" />
                         </div>
                         📍 Ubicación del Local
                       </h4>
-                      <p className="text-xs sm:text-sm text-blue-700 ml-8 sm:ml-11">Ver ubicación exacta en Google Maps (opcional)</p>
+                      <p className="text-sm text-blue-700 text-center sm:text-left sm:ml-11 mt-2">Ver ubicación exacta en Google Maps (opcional)</p>
                     </div>
-                    <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-3">
-                      <label className="flex items-center justify-center sm:justify-start w-full sm:w-auto">
+                    <div className="flex flex-col space-y-3">
+                      <label className="flex items-center justify-center w-full">
                         <input
                           type="checkbox"
                           checked={showLocationMap}
                           onChange={(e) => setShowLocationMap(e.target.checked)}
-                          className="mr-2 h-4 w-4 sm:h-5 sm:w-5 text-blue-600 focus:ring-blue-500 focus:ring-2 flex-shrink-0"
+                          className="mr-3 h-5 w-5 text-blue-600 focus:ring-blue-500 focus:ring-2 flex-shrink-0"
                         />
-                        <span className="text-xs sm:text-sm font-medium text-blue-700">📍 Incluir ubicación</span>
+                        <span className="text-sm font-medium text-blue-700">📍 Incluir ubicación en el pedido</span>
                       </label>
                       <button
                         type="button"
                         onClick={openLocationMap}
-                        className="bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white px-3 sm:px-4 py-2 sm:py-3 rounded-xl text-xs sm:text-sm font-bold transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center w-full sm:w-auto"
+                        className="bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white px-4 py-3 rounded-xl text-sm font-bold transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center w-full"
                       >
-                        <ExternalLink className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
+                        <ExternalLink className="h-4 w-4 mr-2" />
                         🗺️ Ver Mapa
                       </button>
                     </div>
@@ -462,14 +462,14 @@ export function CheckoutModal({ isOpen, onClose, onCheckout, items, total }: Che
               )}
 
               {deliveryZones.length === 0 && (
-                <div className="text-center py-12 bg-gradient-to-br from-yellow-50 to-orange-50 rounded-2xl border-2 border-yellow-200">
+                <div className="text-center py-6 sm:py-8 bg-gradient-to-br from-yellow-50 to-orange-50 rounded-2xl border-2 border-yellow-200">
                   <div className="bg-yellow-100 p-4 rounded-full w-fit mx-auto mb-6">
-                    <Truck className="h-12 w-12 text-yellow-600" />
+                    <Truck className="h-8 w-8 sm:h-12 sm:w-12 text-yellow-600" />
                   </div>
-                  <h3 className="text-xl font-bold text-yellow-800 mb-3">
+                  <h3 className="text-lg sm:text-xl font-bold text-yellow-800 mb-3">
                     Solo disponible recogida en el local
                   </h3>
-                  <p className="text-yellow-700 max-w-md mx-auto">
+                  <p className="text-sm sm:text-base text-yellow-700 max-w-md mx-auto px-4">
                     Contacta con el administrador para configurar zonas de entrega adicionales.
                   </p>
                 </div>
@@ -477,7 +477,7 @@ export function CheckoutModal({ isOpen, onClose, onCheckout, items, total }: Che
             </div>
 
             {/* Order Summary */}
-            <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-2xl p-6 border-2 border-blue-200 shadow-xl">
+            <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-2xl p-4 sm:p-6 border-2 border-blue-200 shadow-xl">
               <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                 <div className="bg-gradient-to-r from-blue-500 to-purple-500 p-3 rounded-xl mr-3 shadow-lg">
                   <Calculator className="h-5 w-5 text-white" />
@@ -486,17 +486,17 @@ export function CheckoutModal({ isOpen, onClose, onCheckout, items, total }: Che
               </h3>
               
               {/* Items breakdown */}
-              <div className="bg-white rounded-xl p-4 mb-4 border border-gray-200 shadow-sm">
+              <div className="bg-white rounded-xl p-3 sm:p-4 mb-4 border border-gray-200 shadow-sm">
                 <h4 className="font-bold text-gray-900 mb-3 flex items-center">
-                  <span className="text-base mr-2">📦</span>
+                  <span className="text-lg mr-2">📦</span>
                   Elementos del Pedido ({items.length})
                 </h4>
-                <div className="space-y-2 max-h-32 overflow-y-auto">
+                <div className="space-y-3 max-h-48 sm:max-h-56 overflow-y-auto">
                   {items.map((item, index) => (
-                    <div key={index} className="flex justify-between items-center py-2 px-3 bg-gray-50 rounded-lg">
+                    <div key={index} className="flex flex-col py-3 px-4 bg-gray-50 rounded-lg space-y-3">
                       <div className="flex-1">
-                        <p className="font-medium text-gray-900 text-sm line-clamp-1">{item.title}</p>
-                        <div className="flex items-center space-x-2 text-xs text-gray-600 mt-1">
+                        <p className="font-medium text-gray-900 text-base line-clamp-2 mb-2">{item.title}</p>
+                        <div className="flex flex-wrap gap-2 text-xs text-gray-600 mb-2">
                           <span className={`px-2 py-1 rounded-full ${
                             item.type === 'movie' ? 'bg-blue-100 text-blue-700' :
                             item.type === 'tv' ? 'bg-purple-100 text-purple-700' :
@@ -521,22 +521,23 @@ export function CheckoutModal({ isOpen, onClose, onCheckout, items, total }: Che
                               📊 Serie Extensa
                             </span>
                           )}
-                          <span className={`px-2 py-1 rounded-full font-medium ${
+                        </div>
+                        <div className="mt-2">
+                          <span className={`px-2 py-1 rounded-full font-medium text-xs ${
                             item.paymentType === 'cash' 
                               ? 'bg-green-100 text-green-700' 
                               : 'bg-orange-100 text-orange-700'
                           }`}>
-                            {item.paymentType === 'cash' ? '💵 Efectivo' : '💳 Transfer.'}
+                            {item.paymentType === 'cash' ? '💵 Efectivo' : '💳 Transferencia'}
                           </span>
                         </div>
                       </div>
-                      <div className="text-right ml-3">
+                      <div className="text-center w-full border-t border-gray-200 pt-3">
                         <p className={`font-bold ${
                           item.paymentType === 'cash' ? 'text-green-600' : 'text-orange-600'
                         }`}>
-                          ${item.price.toLocaleString()}
+                          ${item.price.toLocaleString()} CUP
                         </p>
-                        <p className="text-xs text-gray-500">CUP</p>
                       </div>
                     </div>
                   ))}
@@ -544,7 +545,7 @@ export function CheckoutModal({ isOpen, onClose, onCheckout, items, total }: Che
               </div>
               
               {/* Payment method breakdown */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+              <div className="space-y-4 mb-6">
                 {/* Cash payments */}
                 {items.filter(item => item.paymentType === 'cash').length > 0 && (
                   <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border-2 border-green-200">
@@ -554,7 +555,7 @@ export function CheckoutModal({ isOpen, onClose, onCheckout, items, total }: Che
                       </div>
                       <h5 className="font-bold text-green-800">Pago en Efectivo</h5>
                     </div>
-                    <div className="ml-11">
+                    <div className="text-center">
                       <p className="text-sm text-green-700 mb-1">
                         {items.filter(item => item.paymentType === 'cash').length} elementos
                       </p>
@@ -575,7 +576,7 @@ export function CheckoutModal({ isOpen, onClose, onCheckout, items, total }: Che
                       </div>
                       <h5 className="font-bold text-orange-800">Transferencia Bancaria</h5>
                     </div>
-                    <div className="ml-11">
+                    <div className="text-center">
                       <p className="text-sm text-orange-700 mb-1">
                         {items.filter(item => item.paymentType === 'transfer').length} elementos (+10%)
                       </p>
@@ -589,39 +590,39 @@ export function CheckoutModal({ isOpen, onClose, onCheckout, items, total }: Che
               </div>
               
               {/* Totals breakdown */}
-              <div className="space-y-3">
-                <div className="flex justify-between items-center py-2 px-4 bg-white rounded-lg border border-gray-200">
-                  <span className="text-gray-700 font-medium flex items-center">
+              <div className="space-y-4">
+                <div className="flex flex-col justify-between items-center py-4 px-4 bg-white rounded-lg border border-gray-200 space-y-2">
+                  <span className="text-gray-700 font-medium flex items-center text-center">
                     <span className="mr-2">🛒</span>
                     Subtotal ({items.length} elementos)
                   </span>
-                  <span className="font-bold text-gray-900">${total.toLocaleString()} CUP</span>
+                  <span className="font-bold text-gray-900 text-xl">${total.toLocaleString()} CUP</span>
                 </div>
                 
                 {selectedZone && (
-                  <div className="flex justify-between items-center py-2 px-4 bg-white rounded-lg border border-gray-200">
-                    <span className="text-gray-700 font-medium flex items-center">
+                  <div className="flex flex-col justify-between items-center py-4 px-4 bg-white rounded-lg border border-gray-200 space-y-2">
+                    <span className="text-gray-700 font-medium flex items-center text-center">
                       <span className="mr-2">{pickupLocation ? '🏪' : '🚚'}</span>
                       {pickupLocation ? 'Recogida en local' : `Entrega a ${selectedZone}`}
                     </span>
-                    <span className={`font-bold ${deliveryCost === 0 ? 'text-green-600' : 'text-blue-600'}`}>
+                    <span className={`font-bold text-xl ${deliveryCost === 0 ? 'text-green-600' : 'text-blue-600'}`}>
                       {deliveryCost === 0 ? '✨ GRATIS' : `$${deliveryCost.toLocaleString()} CUP`}
                     </span>
                   </div>
                 )}
                 
-                <div className="bg-gradient-to-r from-green-100 to-blue-100 rounded-xl p-4 border-2 border-green-300 shadow-lg">
-                  <div className="flex justify-between items-center">
+                <div className="bg-gradient-to-r from-green-100 to-blue-100 rounded-xl p-6 border-2 border-green-300 shadow-lg">
+                  <div className="flex flex-col items-center space-y-2">
                     <span className="text-xl font-bold text-gray-900 flex items-center">
                       <span className="mr-2">💰</span>
                       TOTAL A PAGAR
                     </span>
-                    <span className="text-2xl font-bold text-green-600">
+                    <span className="text-3xl font-bold text-green-600">
                       ${(total + deliveryCost).toLocaleString()} CUP
                     </span>
                   </div>
                   {deliveryCost > 0 && (
-                    <div className="mt-2 text-sm text-gray-600 text-center">
+                    <div className="mt-3 text-sm text-gray-600 text-center">
                       Incluye ${deliveryCost.toLocaleString()} CUP de entrega
                     </div>
                   )}
@@ -632,18 +633,18 @@ export function CheckoutModal({ isOpen, onClose, onCheckout, items, total }: Che
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-6 py-5 rounded-2xl font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl flex items-center justify-center"
+              className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-6 py-5 rounded-2xl font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl flex items-center justify-center touch-manipulation"
             >
               <div className="bg-white/20 p-2 rounded-lg mr-3">
-                <Send className="h-5 w-5" />
+                <Send className="h-6 w-6" />
               </div>
               📱 Enviar Pedido por WhatsApp
             </button>
             
             <div className="text-center mt-4 p-4 bg-green-50 rounded-xl border border-green-200">
-              <p className="text-sm text-green-700 font-medium flex items-center justify-center">
+              <p className="text-sm text-green-700 font-medium flex items-center justify-center flex-wrap">
                 <span className="mr-2">ℹ️</span>
-                Al enviar el pedido serás redirigido a WhatsApp para completar la transacción
+                <span className="text-center">Al enviar el pedido serás redirigido a WhatsApp para completar la transacción</span>
               </p>
             </div>
           </form>

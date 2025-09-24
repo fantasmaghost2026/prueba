@@ -54,13 +54,26 @@ export function Cart() {
   };
 
   const getPosterUrl = (posterPath: string | null) => {
-    // Para novelas, usar una imagen por defecto
-    if (!posterPath) {
-      return 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=500&h=750&fit=crop&crop=center';
-    }
     return posterPath
       ? `${IMAGE_BASE_URL}/${POSTER_SIZE}${posterPath}`
       : 'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=500&h=750&fit=crop&crop=center';
+  };
+
+  const getNovelImage = (novel: NovelCartItem) => {
+    if (novel.image) {
+      return novel.image;
+    }
+    // Imagen por defecto basada en el género
+    const genreImages = {
+      'Drama': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=400&fit=crop',
+      'Romance': 'https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=300&h=400&fit=crop',
+      'Acción': 'https://images.unsplash.com/photo-1489599843253-c76cc4bcb8cf?w=300&h=400&fit=crop',
+      'Comedia': 'https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=300&h=400&fit=crop',
+      'Familia': 'https://images.unsplash.com/photo-1511895426328-dc8714191300?w=300&h=400&fit=crop'
+    };
+    
+    return genreImages[novel.genre as keyof typeof genreImages] || 
+           'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=300&h=400&fit=crop';
   };
 
   const isAnime = (item: any) => {
@@ -169,8 +182,23 @@ export function Cart() {
                   {/* Poster */}
                   {item.type === 'novel' ? (
                     <div className="flex-shrink-0 mx-auto sm:mx-0">
-                      <div className="w-24 h-36 sm:w-20 sm:h-28 bg-gradient-to-br from-pink-400 to-purple-500 rounded-xl shadow-lg flex items-center justify-center border-2 border-white">
-                        <BookOpen className="h-8 w-8 text-white" />
+                      <div className="relative w-24 h-36 sm:w-20 sm:h-28 rounded-xl shadow-lg overflow-hidden border-2 border-white">
+                        <img
+                          src={getNovelImage(item as NovelCartItem)}
+                          alt={item.title}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.src = 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=300&h=400&fit=crop';
+                          }}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                        <div className="absolute bottom-1 left-1 right-1">
+                          <div className="bg-pink-500/80 text-white px-1 py-0.5 rounded-full text-xs font-bold text-center">
+                            <BookOpen className="h-3 w-3 inline mr-1" />
+                            Novela
+                          </div>
+                        </div>
                       </div>
                     </div>
                   ) : (
