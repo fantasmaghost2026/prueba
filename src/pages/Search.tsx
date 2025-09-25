@@ -35,15 +35,22 @@ export function SearchPage() {
   const performSearch = async (searchQuery: string, type: SearchType, pageNum: number, append: boolean = false) => {
     if (!searchQuery.trim()) return;
 
+    // Normalizar la consulta de búsqueda para manejar espacios y caracteres especiales
+    const normalizedQuery = searchQuery.trim().replace(/\s+/g, ' ');
+
     try {
       if (!append) setLoading(true);
       
       // Search novels first
-      const novelMatches = adminState.novels?.filter(novel =>
-        novel.titulo.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        novel.genero.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (novel.pais && novel.pais.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        (novel.descripcion && novel.descripcion.toLowerCase().includes(searchQuery.toLowerCase()))
+      const novelMatches = adminState.novels?.filter(novel => {
+        const searchTerms = normalizedQuery.toLowerCase().split(' ');
+        const novelText = `${novel.titulo} ${novel.genero} ${novel.pais || ''} ${novel.descripcion || ''}`.toLowerCase();
+        
+        // Buscar coincidencias exactas del título completo o por palabras individuales
+        const exactTitleMatch = novel.titulo.toLowerCase().includes(normalizedQuery.toLowerCase());
+        const wordMatches = searchTerms.every(term => novelText.includes(term));
+        
+        return exactTitleMatch || wordMatches;
       ) || [];
       
       setNovelResults(novelMatches);
@@ -51,13 +58,13 @@ export function SearchPage() {
       let response;
       switch (type) {
         case 'movie':
-          response = await tmdbService.searchMovies(searchQuery, pageNum);
+          response = await tmdbService.searchMovies(normalizedQuery, pageNum);
           break;
         case 'tv':
           // Buscar tanto series normales como anime
           const [tvResponse, animeResponse] = await Promise.all([
-            tmdbService.searchTVShows(searchQuery, pageNum),
-            tmdbService.searchAnime(searchQuery, pageNum)
+            tmdbService.searchTVShows(normalizedQuery, pageNum),
+            tmdbService.searchAnime(normalizedQuery, pageNum)
           ]);
           
           // Combinar resultados y eliminar duplicados
@@ -75,8 +82,8 @@ export function SearchPage() {
         default:
           // Para búsqueda general, incluir anime también
           const [multiResponse, animeMultiResponse] = await Promise.all([
-            tmdbService.searchMulti(searchQuery, pageNum),
-            tmdbService.searchAnime(searchQuery, pageNum)
+            tmdbService.searchMulti(normalizedQuery, pageNum),
+            tmdbService.searchAnime(normalizedQuery, pageNum)
           ]);
           
           const allResults = [...multiResponse.results, ...animeMultiResponse.results];

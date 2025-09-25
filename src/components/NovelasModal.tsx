@@ -150,7 +150,16 @@ export function NovelasModal({ isOpen, onClose, onFinalizePedido }: NovelasModal
   // Filter novels function
   const getFilteredNovelas = () => {
     let filtered = novelasWithPayment.filter(novela => {
-      const matchesSearch = novela.titulo.toLowerCase().includes(searchTerm.toLowerCase());
+      // Mejorar la búsqueda para manejar espacios y múltiples palabras
+      const normalizedSearchTerm = searchTerm.trim().replace(/\s+/g, ' ').toLowerCase();
+      const novelText = `${novela.titulo} ${novela.genero} ${novela.pais || ''} ${novela.descripcion || ''}`.toLowerCase();
+      
+      // Buscar coincidencias exactas del título o por palabras individuales
+      const exactTitleMatch = novela.titulo.toLowerCase().includes(normalizedSearchTerm);
+      const searchWords = normalizedSearchTerm.split(' ');
+      const wordMatches = searchWords.every(word => novelText.includes(word));
+      
+      const matchesSearch = exactTitleMatch || wordMatches;
       const matchesGenre = selectedGenre === '' || novela.genero === selectedGenre;
       const matchesYear = selectedYear === '' || novela.año.toString() === selectedYear;
       const matchesCountry = selectedCountry === '' || novela.pais === selectedCountry;
