@@ -10,95 +10,157 @@ export class SyncManager {
     return SyncManager.instance;
   }
 
-  // Registrar un listener para un tipo de datos específico
-  subscribe(dataType: string, callback: (data: any) => void): () => void {
-    if (!this.listeners.has(dataType)) {
-      this.listeners.set(dataType, new Set());
+  // Registrar listener para cambios
+  subscribe(key: string, callback: (data: any) => void): () => void {
+    if (!this.listeners.has(key)) {
+      this.listeners.set(key, new Set());
     }
     
-    this.listeners.get(dataType)!.add(callback);
+    this.listeners.get(key)!.add(callback);
     
     // Retornar función de cleanup
     return () => {
-      const listeners = this.listeners.get(dataType);
+      const listeners = this.listeners.get(key);
       if (listeners) {
         listeners.delete(callback);
         if (listeners.size === 0) {
-          this.listeners.delete(dataType);
+          this.listeners.delete(key);
         }
       }
     };
   }
 
   // Notificar cambios a todos los listeners
-  notify(dataType: string, data: any): void {
-    const listeners = this.listeners.get(dataType);
+  notify(key: string, data: any): void {
+    const listeners = this.listeners.get(key);
     if (listeners) {
       listeners.forEach(callback => {
         try {
           callback(data);
         } catch (error) {
-          console.error(`Error in sync listener for ${dataType}:`, error);
+          console.error(`Error in sync listener for ${key}:`, error);
         }
       });
     }
 
     // También emitir evento personalizado para compatibilidad
-    const event = new CustomEvent('sync_update', {
-      detail: { type: dataType, data }
+    const event = new CustomEvent('sync_manager_update', {
+      detail: { key, data }
     });
     window.dispatchEvent(event);
   }
 
-  // Sincronizar novelas específicamente
+  // Sincronizar novelas entre admin y componentes
   syncNovels(novels: any[]): void {
-    const transmissionNovels = novels.filter(novel => novel.estado === 'transmision');
-    const finishedNovels = novels.filter(novel => novel.estado === 'finalizada');
+    // Actualizar localStorage
+    try {
+      const adminState = localStorage.getItem('admin_system_state');
+      if (adminState) {
+        const state = JSON.parse(adminState);
+        state.novels = novels;
+        localStorage.setItem('admin_system_state', JSON.stringify(state));
+      }
+
+      const systemConfig = localStorage.getItem('system_config');
+      if (systemConfig) {
+        const config = JSON.parse(systemConfig);
+        config.novels = novels;
+        localStorage.setItem('system_config', JSON.stringify(config));
+      }
+    } catch (error) {
+      console.error('Error updating novels in localStorage:', error);
+    }
+
+    // Notificar a todos los listeners
+    this.notify('novels', novels);
     
-    this.notify('novels_transmission', transmissionNovels);
-    this.notify('novels_finished', finishedNovels);
-    this.notify('novels_all', novels);
+    // Emitir eventos específicos para compatibilidad
+    const event = new CustomEvent('admin_state_change', {
+      detail: { type: 'novels_sync', data: novels }
+    });
+    window.dispatchEvent(event);
   }
 
   // Sincronizar precios
   syncPrices(prices: any): void {
+    try {
+      const adminState = localStorage.getItem('admin_system_state');
+      if (adminState) {
+        const state = JSON.parse(adminState);
+        state.prices = prices;
+        localStorage.setItem('admin_system_state', JSON.stringify(state));
+      }
+
+      const systemConfig = localStorage.getItem('system_config');
+      if (systemConfig) {
+        const config = JSON.parse(systemConfig);
+        config.prices = prices;
+        localStorage.setItem('system_config', JSON.stringify(config));
+      }
+    } catch (error) {
+      console.error('Error updating prices in localStorage:', error);
+    }
+
     this.notify('prices', prices);
+    
+    const event = new CustomEvent('admin_state_change', {
+      detail: { type: 'prices', data: prices }
+    });
+    window.dispatchEvent(event);
   }
 
   // Sincronizar zonas de entrega
   syncDeliveryZones(zones: any[]): void {
-    this.notify('delivery_zones', zones);
-  }
-
-  // Obtener datos actuales desde localStorage
-  getCurrentData(dataType: string): any {
     try {
-      // Intentar desde el estado del admin primero
-      const adminStateStr = localStorage.getItem('admin_system_state');
-      if (adminStateStr) {
-        const adminState = JSON.parse(adminStateStr);
-        
-        switch (dataType) {
-          case 'novels':
-            return adminState.novels || [];
-          case 'prices':
-            return adminState.prices || {};
-          case 'delivery_zones':
-            return adminState.deliveryZones || [];
-        }
+      const adminState = localStorage.getItem('admin_system_state');
+      if (adminState) {
+        const state = JSON.parse(adminState);
+        state.deliveryZones = zones;
+        localStorage.setItem('admin_system_state', JSON.stringify(state));
       }
-      
-      // Fallback al system_config
+
       const systemConfig = localStorage.getItem('system_config');
       if (systemConfig) {
         const config = JSON.parse(systemConfig);
-        return config[dataType] || (dataType === 'novels' || dataType === 'delivery_zones' ? [] : {});
+        config.deliveryZones = zones;
+        localStorage.setItem('system_config', JSON.stringify(config));
       }
     } catch (error) {
-      console.error(`Error getting current data for ${dataType}:`, error);
+      console.error('Error updating delivery zones in localStorage:', error);
+    }
+
+    this.notify('deliveryZones', zones);
+    
+    const event = new CustomEvent('admin_state_change', {
+      detail: { type: 'delivery_zones_sync', data: zones }
+    });
+    window.dispatchEvent(event);
+  }
+
+  // Obtener datos actuales
+  getCurrentData(key: string): any {
+    try {
+      const adminState = localStorage.getItem('admin_system_state');
+      const systemConfig = localStorage.getItem('system_config');
+      
+      if (adminState) {
+        const state = JSON.parse(adminState);
+        if (state[key]) {
+          return state[key];
+        }
+      }
+      
+      if (systemConfig) {
+        const config = JSON.parse(systemConfig);
+        if (config[key]) {
+          return config[key];
+        }
+      }
+    } catch (error) {
+      console.error(`Error getting current data for ${key}:`, error);
     }
     
-    return dataType === 'novels' || dataType === 'delivery_zones' ? [] : {};
+    return null;
   }
 
   // Limpiar todos los listeners

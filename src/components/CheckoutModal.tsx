@@ -69,22 +69,20 @@ export function CheckoutModal({ isOpen, onClose, onCheckout, items, total }: Che
   useEffect(() => {
     const loadDeliveryZones = () => {
       try {
-        // Primero intentar cargar desde el estado del admin
-        const adminStateStr = localStorage.getItem('admin_system_state');
-        if (adminStateStr) {
-          const adminState = JSON.parse(adminStateStr);
-          if (adminState.deliveryZones && Array.isArray(adminState.deliveryZones)) {
-            setDeliveryZones(adminState.deliveryZones);
-            return;
-          }
-        }
-        
-        // Fallback al system_config
-        const systemConfig = localStorage.getItem('system_config');
-        if (systemConfig) {
-          const config = JSON.parse(systemConfig);
-          if (config.deliveryZones && Array.isArray(config.deliveryZones)) {
+        const adminConfig = localStorage.getItem('system_config');
+        if (adminConfig) {
+          const config = JSON.parse(adminConfig);
+          if (config.deliveryZones) {
             setDeliveryZones(config.deliveryZones);
+          }
+        } else {
+          // Fallback to admin state
+          const adminState = localStorage.getItem('admin_system_state');
+          if (adminState) {
+            const state = JSON.parse(adminState);
+            if (state.deliveryZones) {
+              setDeliveryZones(state.deliveryZones);
+            }
           }
         }
       } catch (error) {
@@ -105,33 +103,26 @@ export function CheckoutModal({ isOpen, onClose, onCheckout, items, total }: Che
 
     const handleAdminFullSync = (event: CustomEvent) => {
       if (event.detail.config?.deliveryZones) {
-        if (Array.isArray(event.detail.config.deliveryZones)) {
-          setDeliveryZones(event.detail.config.deliveryZones);
-        }
-      }
-      // También escuchar cambios en el estado del admin
-      if (event.detail.state?.deliveryZones) {
-        if (Array.isArray(event.detail.state.deliveryZones)) {
-          setDeliveryZones(event.detail.state.deliveryZones);
-        }
+        setDeliveryZones(event.detail.config.deliveryZones);
+      } else if (event.detail.state?.deliveryZones) {
+        setDeliveryZones(event.detail.state.deliveryZones);
       }
     };
 
-    // Escuchar actualizaciones directas del estado del admin
-    const handleAdminStateUpdate = (event: CustomEvent) => {
-      if (event.detail.deliveryZones && Array.isArray(event.detail.deliveryZones)) {
-        setDeliveryZones(event.detail.deliveryZones);
+    // Listen for storage changes
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === 'admin_system_state' || event.key === 'system_config') {
+        loadDeliveryZones();
       }
     };
-
     window.addEventListener('admin_state_change', handleAdminStateChange as EventListener);
     window.addEventListener('admin_full_sync', handleAdminFullSync as EventListener);
-    window.addEventListener('admin_state_update', handleAdminStateUpdate as EventListener);
+    window.addEventListener('storage', handleStorageChange);
 
     return () => {
       window.removeEventListener('admin_state_change', handleAdminStateChange as EventListener);
       window.removeEventListener('admin_full_sync', handleAdminFullSync as EventListener);
-      window.removeEventListener('admin_state_update', handleAdminStateUpdate as EventListener);
+      window.removeEventListener('storage', handleStorageChange);
     };
   }, []);
 

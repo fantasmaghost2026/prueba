@@ -46,22 +46,20 @@ export function NovelasModal({ isOpen, onClose, onFinalizePedido }: NovelasModal
   useEffect(() => {
     const loadNovels = () => {
       try {
-        // Primero intentar cargar desde el estado del admin en memoria
-        const adminStateStr = localStorage.getItem('admin_system_state');
-        if (adminStateStr) {
-          const adminState = JSON.parse(adminStateStr);
-          if (adminState.novels && Array.isArray(adminState.novels)) {
-            setAdminNovels(adminState.novels);
-            return;
-          }
-        }
-        
-        // Fallback al system_config si no hay estado del admin
-        const systemConfig = localStorage.getItem('system_config');
-        if (systemConfig) {
-          const config = JSON.parse(systemConfig);
-          if (config.novels && Array.isArray(config.novels)) {
+        const adminConfig = localStorage.getItem('system_config');
+        if (adminConfig) {
+          const config = JSON.parse(adminConfig);
+          if (config.novels) {
             setAdminNovels(config.novels);
+          }
+        } else {
+          // Si no hay configuración guardada, intentar cargar del estado del admin
+          const adminState = localStorage.getItem('admin_system_state');
+          if (adminState) {
+            const state = JSON.parse(adminState);
+            if (state.novels) {
+              setAdminNovels(state.novels);
+            }
           }
         }
       } catch (error) {
@@ -82,33 +80,26 @@ export function NovelasModal({ isOpen, onClose, onFinalizePedido }: NovelasModal
 
     const handleAdminFullSync = (event: CustomEvent) => {
       if (event.detail.config?.novels) {
-        if (Array.isArray(event.detail.config.novels)) {
-          setAdminNovels(event.detail.config.novels);
-        }
-      }
-      // También escuchar cambios en el estado del admin
-      if (event.detail.state?.novels) {
-        if (Array.isArray(event.detail.state.novels)) {
-          setAdminNovels(event.detail.state.novels);
-        }
+        setAdminNovels(event.detail.config.novels);
+      } else if (event.detail.state?.novels) {
+        setAdminNovels(event.detail.state.novels);
       }
     };
 
-    // Escuchar cambios específicos del estado del admin
-    const handleAdminStateUpdate = (event: CustomEvent) => {
-      if (event.detail.novels && Array.isArray(event.detail.novels)) {
-        setAdminNovels(event.detail.novels);
+    // Listen for direct admin state changes
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === 'admin_system_state' || event.key === 'system_config') {
+        loadNovels();
       }
     };
-
     window.addEventListener('admin_state_change', handleAdminStateChange as EventListener);
     window.addEventListener('admin_full_sync', handleAdminFullSync as EventListener);
-    window.addEventListener('admin_state_update', handleAdminStateUpdate as EventListener);
+    window.addEventListener('storage', handleStorageChange);
 
     return () => {
       window.removeEventListener('admin_state_change', handleAdminStateChange as EventListener);
       window.removeEventListener('admin_full_sync', handleAdminFullSync as EventListener);
-      window.removeEventListener('admin_state_update', handleAdminStateUpdate as EventListener);
+      window.removeEventListener('storage', handleStorageChange);
     };
   }, []);
 
