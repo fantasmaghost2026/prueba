@@ -75,15 +75,6 @@ export function CheckoutModal({ isOpen, onClose, onCheckout, items, total }: Che
           if (config.deliveryZones) {
             setDeliveryZones(config.deliveryZones);
           }
-        } else {
-          // Fallback to admin state
-          const adminState = localStorage.getItem('admin_system_state');
-          if (adminState) {
-            const state = JSON.parse(adminState);
-            if (state.deliveryZones) {
-              setDeliveryZones(state.deliveryZones);
-            }
-          }
         }
       } catch (error) {
         console.error('Error loading delivery zones:', error);
@@ -104,25 +95,15 @@ export function CheckoutModal({ isOpen, onClose, onCheckout, items, total }: Che
     const handleAdminFullSync = (event: CustomEvent) => {
       if (event.detail.config?.deliveryZones) {
         setDeliveryZones(event.detail.config.deliveryZones);
-      } else if (event.detail.state?.deliveryZones) {
-        setDeliveryZones(event.detail.state.deliveryZones);
       }
     };
 
-    // Listen for storage changes
-    const handleStorageChange = (event: StorageEvent) => {
-      if (event.key === 'admin_system_state' || event.key === 'system_config') {
-        loadDeliveryZones();
-      }
-    };
     window.addEventListener('admin_state_change', handleAdminStateChange as EventListener);
     window.addEventListener('admin_full_sync', handleAdminFullSync as EventListener);
-    window.addEventListener('storage', handleStorageChange);
 
     return () => {
       window.removeEventListener('admin_state_change', handleAdminStateChange as EventListener);
       window.removeEventListener('admin_full_sync', handleAdminFullSync as EventListener);
-      window.removeEventListener('storage', handleStorageChange);
     };
   }, []);
 
@@ -217,103 +198,103 @@ export function CheckoutModal({ isOpen, onClose, onCheckout, items, total }: Che
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden shadow-2xl">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-2 sm:p-4 md:p-6 lg:p-8 z-50 overflow-y-auto">
+      <div className="bg-white rounded-2xl w-full max-w-2xl lg:max-w-4xl xl:max-w-5xl my-4 sm:my-6 lg:my-8 max-h-[95vh] sm:max-h-[90vh] overflow-hidden shadow-2xl">
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-6 text-white">
+        <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 sm:p-6 lg:p-8 text-white">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
-              <div className="bg-white/20 p-3 rounded-xl mr-4">
-                <Send className="h-6 w-6" />
+              <div className="bg-white/20 p-2 sm:p-3 rounded-xl mr-2 sm:mr-4">
+                <Send className="h-5 w-5 sm:h-6 sm:w-6" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold">Finalizar Pedido</h2>
-                <p className="text-blue-100">Completa tus datos para proceder</p>
+                <h2 className="text-lg sm:text-2xl lg:text-3xl font-bold">Finalizar Pedido</h2>
+                <p className="text-xs sm:text-sm lg:text-base text-blue-100">Completa tus datos para proceder</p>
               </div>
             </div>
             <button
               onClick={onClose}
-              className="p-2 hover:bg-white/20 rounded-full transition-colors"
+              className="p-2 hover:bg-white/20 rounded-full transition-colors touch-manipulation"
             >
-              <X className="h-6 w-6" />
+              <X className="h-5 w-5 sm:h-6 sm:w-6" />
             </button>
           </div>
         </div>
 
-        <div className="overflow-y-auto max-h-[calc(90vh-120px)]">
-          <form onSubmit={handleSubmit} className="p-6 space-y-6">
+        <div className="overflow-y-auto max-h-[calc(95vh-100px)] sm:max-h-[calc(90vh-120px)]">
+          <form onSubmit={handleSubmit} className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
             {/* Customer Information */}
-            <div className="bg-gray-50 rounded-xl p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                <User className="h-5 w-5 mr-2 text-blue-600" />
+            <div className="bg-gray-50 rounded-xl p-4 sm:p-6 lg:p-8">
+              <h3 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900 mb-4 lg:mb-6 flex items-center">
+                <User className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 mr-2 text-blue-600" />
                 Información Personal
               </h3>
-              
-              <div className="space-y-4">
+
+              <div className="space-y-4 lg:space-y-5">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm lg:text-base font-medium text-gray-700 mb-2">
                     Nombre Completo *
                   </label>
                   <input
                     type="text"
                     value={customerInfo.fullName}
                     onChange={(e) => handleInputChange('fullName', e.target.value)}
-                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    className={`w-full px-4 py-3 lg:py-4 text-base lg:text-lg border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                       errors.fullName ? 'border-red-500' : 'border-gray-300'
                     }`}
                     placeholder="Ingresa tu nombre completo"
                   />
                   {errors.fullName && (
-                    <p className="text-red-500 text-sm mt-1">{errors.fullName}</p>
+                    <p className="text-red-500 text-sm lg:text-base mt-1">{errors.fullName}</p>
                   )}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm lg:text-base font-medium text-gray-700 mb-2">
                     Teléfono *
                   </label>
                   <input
                     type="tel"
                     value={customerInfo.phone}
                     onChange={(e) => handleInputChange('phone', e.target.value)}
-                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    className={`w-full px-4 py-3 lg:py-4 text-base lg:text-lg border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                       errors.phone ? 'border-red-500' : 'border-gray-300'
                     }`}
                     placeholder="+53 5469 0878 o 54690878"
                   />
                   {errors.phone && (
-                    <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
+                    <p className="text-red-500 text-sm lg:text-base mt-1">{errors.phone}</p>
                   )}
-                  <p className="text-gray-500 text-xs mt-1">
+                  <p className="text-gray-500 text-xs lg:text-sm mt-1">
                     Formatos válidos: +53 5469 0878, 54690878, 22345678
                   </p>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm lg:text-base font-medium text-gray-700 mb-2">
                     Dirección Completa {!pickupLocation && '*'}
                   </label>
                   <textarea
                     value={customerInfo.address}
                     onChange={(e) => handleInputChange('address', e.target.value)}
                     rows={3}
-                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none ${
+                    className={`w-full px-4 py-3 lg:py-4 text-base lg:text-lg border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none ${
                       errors.address ? 'border-red-500' : 'border-gray-300'
                     }`}
                     placeholder={pickupLocation ? "Dirección opcional para contacto" : "Calle, número, entre calles, referencias..."}
                     disabled={pickupLocation}
                   />
                   {errors.address && (
-                    <p className="text-red-500 text-sm mt-1">{errors.address}</p>
+                    <p className="text-red-500 text-sm lg:text-base mt-1">{errors.address}</p>
                   )}
                 </div>
               </div>
             </div>
 
             {/* Delivery Options */}
-            <div className="bg-gray-50 rounded-xl p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                <MapPin className="h-5 w-5 mr-2 text-green-600" />
+            <div className="bg-gray-50 rounded-xl p-4 sm:p-6 lg:p-8">
+              <h3 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900 mb-4 lg:mb-6 flex items-center">
+                <MapPin className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 mr-2 text-green-600" />
                 Opciones de Entrega *
               </h3>
               
@@ -496,25 +477,25 @@ export function CheckoutModal({ isOpen, onClose, onCheckout, items, total }: Che
             </div>
 
             {/* Order Summary */}
-            <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-2xl p-4 sm:p-6 border-2 border-blue-200 shadow-xl">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                <div className="bg-gradient-to-r from-blue-500 to-purple-500 p-3 rounded-xl mr-3 shadow-lg">
-                  <Calculator className="h-5 w-5 text-white" />
+            <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-2xl p-4 sm:p-6 lg:p-8 border-2 border-blue-200 shadow-xl">
+              <h3 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900 mb-4 lg:mb-6 flex items-center">
+                <div className="bg-gradient-to-r from-blue-500 to-purple-500 p-2 sm:p-3 rounded-xl mr-2 sm:mr-3 shadow-lg">
+                  <Calculator className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 text-white" />
                 </div>
                 Resumen del Pedido
               </h3>
               
               {/* Items breakdown */}
-              <div className="bg-white rounded-xl p-3 sm:p-4 mb-4 border border-gray-200 shadow-sm">
-                <h4 className="font-bold text-gray-900 mb-3 flex items-center">
-                  <span className="text-lg mr-2">📦</span>
+              <div className="bg-white rounded-xl p-3 sm:p-4 lg:p-6 mb-4 lg:mb-6 border border-gray-200 shadow-sm">
+                <h4 className="font-bold text-gray-900 mb-3 lg:mb-4 flex items-center text-sm sm:text-base lg:text-lg">
+                  <span className="text-base sm:text-lg lg:text-xl mr-2">📦</span>
                   Elementos del Pedido ({items.length})
                 </h4>
-                <div className="space-y-3 max-h-48 sm:max-h-56 overflow-y-auto">
+                <div className="space-y-3 lg:space-y-4 max-h-40 sm:max-h-48 md:max-h-56 lg:max-h-80 overflow-y-auto">
                   {items.map((item, index) => (
-                    <div key={index} className="flex flex-col py-3 px-4 bg-gray-50 rounded-lg space-y-3">
+                    <div key={index} className="flex flex-col py-2 sm:py-3 px-3 sm:px-4 bg-gray-50 rounded-lg space-y-2 sm:space-y-3">
                       <div className="flex-1">
-                        <p className="font-medium text-gray-900 text-base line-clamp-2 mb-2">{item.title}</p>
+                        <p className="font-medium text-gray-900 text-sm sm:text-base line-clamp-2 mb-2">{item.title}</p>
                         <div className="flex flex-wrap gap-2 text-xs text-gray-600 mb-2">
                           <span className={`px-2 py-1 rounded-full ${
                             item.type === 'movie' ? 'bg-blue-100 text-blue-700' :
@@ -551,8 +532,8 @@ export function CheckoutModal({ isOpen, onClose, onCheckout, items, total }: Che
                           </span>
                         </div>
                       </div>
-                      <div className="text-center w-full border-t border-gray-200 pt-3">
-                        <p className={`font-bold ${
+                      <div className="text-center w-full border-t border-gray-200 pt-2 sm:pt-3">
+                        <p className={`font-bold text-base sm:text-lg ${
                           item.paymentType === 'cash' ? 'text-green-600' : 'text-orange-600'
                         }`}>
                           ${item.price.toLocaleString()} CUP
@@ -564,42 +545,42 @@ export function CheckoutModal({ isOpen, onClose, onCheckout, items, total }: Che
               </div>
               
               {/* Payment method breakdown */}
-              <div className="space-y-4 mb-6">
+              <div className="space-y-3 sm:space-y-4 mb-4 sm:mb-6">
                 {/* Cash payments */}
                 {items.filter(item => item.paymentType === 'cash').length > 0 && (
-                  <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border-2 border-green-200">
+                  <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-3 sm:p-4 border-2 border-green-200">
                     <div className="flex items-center mb-2">
-                      <div className="bg-green-500 p-2 rounded-lg mr-3 shadow-sm">
-                        <DollarSign className="h-4 w-4 text-white" />
+                      <div className="bg-green-500 p-1.5 sm:p-2 rounded-lg mr-2 sm:mr-3 shadow-sm">
+                        <DollarSign className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
                       </div>
-                      <h5 className="font-bold text-green-800">Pago en Efectivo</h5>
+                      <h5 className="font-bold text-green-800 text-sm sm:text-base">Pago en Efectivo</h5>
                     </div>
                     <div className="text-center">
-                      <p className="text-sm text-green-700 mb-1">
+                      <p className="text-xs sm:text-sm text-green-700 mb-1">
                         {items.filter(item => item.paymentType === 'cash').length} elementos
                       </p>
-                      <p className="text-xl font-bold text-green-800">
+                      <p className="text-lg sm:text-xl font-bold text-green-800">
                         ${items.filter(item => item.paymentType === 'cash')
                           .reduce((sum, item) => sum + item.price, 0).toLocaleString()} CUP
                       </p>
                     </div>
                   </div>
                 )}
-                
+
                 {/* Transfer payments */}
                 {items.filter(item => item.paymentType === 'transfer').length > 0 && (
-                  <div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-xl p-4 border-2 border-orange-200">
+                  <div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-xl p-3 sm:p-4 border-2 border-orange-200">
                     <div className="flex items-center mb-2">
-                      <div className="bg-orange-500 p-2 rounded-lg mr-3 shadow-sm">
-                        <CreditCard className="h-4 w-4 text-white" />
+                      <div className="bg-orange-500 p-1.5 sm:p-2 rounded-lg mr-2 sm:mr-3 shadow-sm">
+                        <CreditCard className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
                       </div>
-                      <h5 className="font-bold text-orange-800">Transferencia Bancaria</h5>
+                      <h5 className="font-bold text-orange-800 text-sm sm:text-base">Transferencia Bancaria</h5>
                     </div>
                     <div className="text-center">
-                      <p className="text-sm text-orange-700 mb-1">
+                      <p className="text-xs sm:text-sm text-orange-700 mb-1">
                         {items.filter(item => item.paymentType === 'transfer').length} elementos (+10%)
                       </p>
-                      <p className="text-xl font-bold text-orange-800">
+                      <p className="text-lg sm:text-xl font-bold text-orange-800">
                         ${items.filter(item => item.paymentType === 'transfer')
                           .reduce((sum, item) => sum + item.price, 0).toLocaleString()} CUP
                       </p>
@@ -609,39 +590,39 @@ export function CheckoutModal({ isOpen, onClose, onCheckout, items, total }: Che
               </div>
               
               {/* Totals breakdown */}
-              <div className="space-y-4">
-                <div className="flex flex-col justify-between items-center py-4 px-4 bg-white rounded-lg border border-gray-200 space-y-2">
-                  <span className="text-gray-700 font-medium flex items-center text-center">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="flex flex-col justify-between items-center py-3 sm:py-4 px-3 sm:px-4 bg-white rounded-lg border border-gray-200 space-y-2">
+                  <span className="text-gray-700 font-medium flex items-center text-center text-sm sm:text-base">
                     <span className="mr-2">🛒</span>
                     Subtotal ({items.length} elementos)
                   </span>
-                  <span className="font-bold text-gray-900 text-xl">${total.toLocaleString()} CUP</span>
+                  <span className="font-bold text-gray-900 text-lg sm:text-xl">${total.toLocaleString()} CUP</span>
                 </div>
-                
+
                 {selectedZone && (
-                  <div className="flex flex-col justify-between items-center py-4 px-4 bg-white rounded-lg border border-gray-200 space-y-2">
-                    <span className="text-gray-700 font-medium flex items-center text-center">
+                  <div className="flex flex-col justify-between items-center py-3 sm:py-4 px-3 sm:px-4 bg-white rounded-lg border border-gray-200 space-y-2">
+                    <span className="text-gray-700 font-medium flex items-center text-center text-sm sm:text-base">
                       <span className="mr-2">{pickupLocation ? '🏪' : '🚚'}</span>
                       {pickupLocation ? 'Recogida en local' : `Entrega a ${selectedZone}`}
                     </span>
-                    <span className={`font-bold text-xl ${deliveryCost === 0 ? 'text-green-600' : 'text-blue-600'}`}>
+                    <span className={`font-bold text-lg sm:text-xl ${deliveryCost === 0 ? 'text-green-600' : 'text-blue-600'}`}>
                       {deliveryCost === 0 ? '✨ GRATIS' : `$${deliveryCost.toLocaleString()} CUP`}
                     </span>
                   </div>
                 )}
-                
-                <div className="bg-gradient-to-r from-green-100 to-blue-100 rounded-xl p-6 border-2 border-green-300 shadow-lg">
+
+                <div className="bg-gradient-to-r from-green-100 to-blue-100 rounded-xl p-4 sm:p-6 border-2 border-green-300 shadow-lg">
                   <div className="flex flex-col items-center space-y-2">
-                    <span className="text-xl font-bold text-gray-900 flex items-center">
+                    <span className="text-base sm:text-xl font-bold text-gray-900 flex items-center">
                       <span className="mr-2">💰</span>
                       TOTAL A PAGAR
                     </span>
-                    <span className="text-3xl font-bold text-green-600">
+                    <span className="text-2xl sm:text-3xl font-bold text-green-600">
                       ${(total + deliveryCost).toLocaleString()} CUP
                     </span>
                   </div>
                   {deliveryCost > 0 && (
-                    <div className="mt-3 text-sm text-gray-600 text-center">
+                    <div className="mt-3 text-xs sm:text-sm text-gray-600 text-center">
                       Incluye ${deliveryCost.toLocaleString()} CUP de entrega
                     </div>
                   )}
@@ -652,16 +633,16 @@ export function CheckoutModal({ isOpen, onClose, onCheckout, items, total }: Che
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-6 py-5 rounded-2xl font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl flex items-center justify-center touch-manipulation"
+              className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 active:from-green-700 active:to-emerald-700 text-white px-6 py-5 lg:py-6 rounded-2xl font-bold text-lg lg:text-xl transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-xl hover:shadow-2xl flex items-center justify-center touch-manipulation"
             >
-              <div className="bg-white/20 p-2 rounded-lg mr-3">
-                <Send className="h-6 w-6" />
+              <div className="bg-white/20 p-2 lg:p-3 rounded-lg mr-3">
+                <Send className="h-6 w-6 lg:h-7 lg:w-7" />
               </div>
               📱 Enviar Pedido por WhatsApp
             </button>
             
-            <div className="text-center mt-4 p-4 bg-green-50 rounded-xl border border-green-200">
-              <p className="text-sm text-green-700 font-medium flex items-center justify-center flex-wrap">
+            <div className="text-center mt-3 sm:mt-4 p-3 sm:p-4 lg:p-5 bg-green-50 rounded-xl border border-green-200">
+              <p className="text-xs sm:text-sm lg:text-base text-green-700 font-medium flex items-center justify-center flex-wrap">
                 <span className="mr-2">ℹ️</span>
                 <span className="text-center">Al enviar el pedido serás redirigido a WhatsApp para completar la transacción</span>
               </p>

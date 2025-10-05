@@ -237,8 +237,34 @@ export function sendOrderToWhatsApp(orderData: OrderData): void {
   message += `🌟 *¡Gracias por elegir TV a la Carta!*`;
   
   const encodedMessage = encodeURIComponent(message);
-  const phoneNumber = '5354690878'; // Número de WhatsApp
-  const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
-  
-  window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+  const phoneNumber = '5354690878';
+
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+  const isAndroid = /Android/i.test(navigator.userAgent);
+  const isMacOS = /Macintosh|MacIntel|MacPPC|Mac68K/i.test(navigator.userAgent);
+  const isWindows = /Win32|Win64|Windows|WinCE/i.test(navigator.userAgent);
+
+  let whatsappUrl: string;
+
+  if (isMobile) {
+    if (isIOS) {
+      whatsappUrl = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodedMessage}`;
+    } else if (isAndroid) {
+      whatsappUrl = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodedMessage}`;
+    } else {
+      whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+    }
+  } else {
+    whatsappUrl = `https://web.whatsapp.com/send?phone=${phoneNumber}&text=${encodedMessage}`;
+  }
+
+  if (isMobile) {
+    window.location.href = whatsappUrl;
+  } else {
+    const newWindow = window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+    if (!newWindow) {
+      window.location.href = whatsappUrl;
+    }
+  }
 }

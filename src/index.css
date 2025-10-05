@@ -182,4 +182,25 @@
   .animate-enhanced-pulse {
     animation: enhanced-pulse 2s ease-in-out infinite;
   }
+
+  /* Netflix-style horizontal scroll */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Smooth scroll behavior for Netflix-style rows */
+  .overflow-x-auto {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Scale effect optimization */
+  .scale-102 {
+    transform: scale(1.02);
+  }
 }
