@@ -272,15 +272,20 @@ export function Home() {
             </div>
           </div>
           
-          {/* Movies and TV Shows */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
+          {/* Movies and TV Shows with Netflix-style carousel */}
+          <NetflixSection
+            title=""
+            showViewAll={false}
+          >
             {trendingContent.map((item) => {
               const itemType = 'title' in item ? 'movie' : 'tv';
               return (
-                <MovieCard key={`trending-${itemType}-${item.id}`} item={item} type={itemType} />
+                <div key={`trending-${itemType}-${item.id}`} className="flex-shrink-0 w-64">
+                  <MovieCard item={item} type={itemType} />
+                </div>
               );
             })}
-          </div>
+          </NetflixSection>
           
         </section>
 
