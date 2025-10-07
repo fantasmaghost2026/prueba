@@ -351,7 +351,7 @@ const EMBEDDED_CONFIG = {
 // CREDENCIALES DE ACCESO (CONFIGURABLES)
 const ADMIN_CREDENTIALS = {
   username: 'admin',
-  password: 'tvalacarta2024'
+  password: 'admin123'
 };
 
 // Types
@@ -389,6 +389,7 @@ export interface Notification {
   timestamp: string;
   section: string;
   action: string;
+  read: boolean;
 }
 
 export interface SyncStatus {
@@ -438,6 +439,7 @@ type AdminAction =
   | { type: 'UPDATE_NOVEL'; payload: Novel }
   | { type: 'DELETE_NOVEL'; payload: number }
   | { type: 'ADD_NOTIFICATION'; payload: Omit<Notification, 'id' | 'timestamp'> }
+  | { type: 'MARK_NOTIFICATION_READ'; payload: string }
   | { type: 'CLEAR_NOTIFICATIONS' }
   | { type: 'UPDATE_SYNC_STATUS'; payload: Partial<SyncStatus> }
   | { type: 'SYNC_STATE'; payload: Partial<AdminState> }
@@ -456,13 +458,16 @@ interface AdminContextType {
   updateNovel: (novel: Novel) => void;
   deleteNovel: (id: number) => void;
   addNotification: (notification: Omit<Notification, 'id' | 'timestamp'>) => void;
+  markNotificationRead: (id: string) => void;
   clearNotifications: () => void;
-  exportSystemConfig: () => void;
-  importSystemConfig: (config: SystemConfig) => void;
+  exportSystemConfig: () => string;
+  importSystemConfig: (configJson: string) => boolean;
   exportCompleteSourceCode: () => void;
   syncWithRemote: () => Promise<void>;
   broadcastChange: (change: any) => void;
   syncAllSections: () => Promise<void>;
+  getAvailableCountries: () => string[];
+  updateSystemConfig: (config: Partial<SystemConfig>) => void;
 }
 
 // Initial state with embedded configuration
@@ -612,10 +617,21 @@ function adminReducer(state: AdminState, action: AdminAction): AdminState {
         ...action.payload,
         id: Date.now().toString(),
         timestamp: new Date().toISOString(),
+        read: false,
       };
       return {
         ...state,
         notifications: [notification, ...state.notifications].slice(0, state.systemConfig.settings.maxNotifications),
+      };
+
+    case 'MARK_NOTIFICATION_READ':
+      return {
+        ...state,
+        notifications: state.notifications.map(notification =>
+          notification.id === action.payload
+            ? { ...notification, read: true }
+            : notification
+        ),
       };
 
     case 'CLEAR_NOTIFICATIONS':
@@ -921,6 +937,10 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
     dispatch({ type: 'ADD_NOTIFICATION', payload: notification });
   };
 
+  const markNotificationRead = (id: string) => {
+    dispatch({ type: 'MARK_NOTIFICATION_READ', payload: id });
+  };
+
   const clearNotifications = () => {
     dispatch({ type: 'CLEAR_NOTIFICATIONS' });
     addNotification({
@@ -932,7 +952,7 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
-  const exportSystemConfig = async () => {
+  const exportSystemConfig = (): string => {
     try {
       addNotification({
         type: 'info',
@@ -961,15 +981,6 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
 
       // Generate JSON file
       const configJson = JSON.stringify(completeConfig, null, 2);
-      const blob = new Blob([configJson], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `TV_a_la_Carta_Config_${new Date().toISOString().split('T')[0]}.json`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
 
       // Update system config with export timestamp
       dispatch({ 
@@ -984,6 +995,8 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
         section: 'Sistema',
         action: 'export_config'
       });
+
+      return configJson;
     } catch (error) {
       console.error('Error exporting system config:', error);
       addNotification({
@@ -993,6 +1006,7 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
         section: 'Sistema',
         action: 'export_config_error'
       });
+      return '';
     }
   };
 
@@ -1035,8 +1049,9 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const importSystemConfig = (config: SystemConfig) => {
+  const importSystemConfig = (configJson: string): boolean => {
     try {
+      const config = JSON.parse(configJson);
       dispatch({ type: 'LOAD_SYSTEM_CONFIG', payload: config });
       addNotification({
         type: 'success',
@@ -1045,6 +1060,7 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
         section: 'Sistema',
         action: 'import'
       });
+      return true;
     } catch (error) {
       console.error('Error importing system config:', error);
       addNotification({
@@ -1054,6 +1070,7 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
         section: 'Sistema',
         action: 'import_error'
       });
+      return false;
     }
   };
 
@@ -1170,6 +1187,46 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const getAvailableCountries = (): string[] => {
+    const countries = new Set<string>();
+    
+    // Add countries from novels
+    state.novels.forEach(novel => {
+      if (novel.pais) {
+        countries.add(novel.pais);
+      }
+    });
+    
+    // Add common countries
+    const commonCountries = [
+      'Cuba',
+      'Turquía',
+      'México',
+      'Brasil',
+      'Colombia',
+      'Argentina',
+      'España',
+      'Estados Unidos',
+      'Corea del Sur',
+      'India',
+      'Reino Unido',
+      'Francia',
+      'Italia',
+      'Alemania',
+      'Japón',
+      'China',
+      'Rusia'
+    ];
+    
+    commonCountries.forEach(country => countries.add(country));
+    
+    return Array.from(countries).sort();
+  };
+
+  const updateSystemConfig = (config: Partial<SystemConfig>) => {
+    dispatch({ type: 'UPDATE_SYSTEM_CONFIG', payload: config });
+  };
+
   return (
     <AdminContext.Provider
       value={{
@@ -1184,6 +1241,7 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
         updateNovel,
         deleteNovel,
         addNotification,
+        markNotificationRead,
         clearNotifications,
         exportSystemConfig,
         importSystemConfig,
@@ -1191,6 +1249,8 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
         syncWithRemote,
         broadcastChange,
         syncAllSections,
+        getAvailableCountries,
+        updateSystemConfig,
       }}
     >
       {children}

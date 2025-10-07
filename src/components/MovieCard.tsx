@@ -62,10 +62,10 @@ export function MovieCard({ item, type }: MovieCardProps) {
 
   return (
     <>
-      <div
-        className={`group relative bg-white rounded-xl shadow-sm overflow-hidden transition-all duration-200 transform h-full flex flex-col ${
-          isHovered
-            ? 'shadow-md scale-[1.01] -translate-y-0.5'
+      <div 
+        className={`group relative bg-white rounded-xl shadow-sm overflow-hidden transition-all duration-200 transform ${
+          isHovered 
+            ? 'shadow-md scale-[1.01] -translate-y-0.5' 
             : 'hover:shadow-md'
         }`}
         onMouseEnter={() => setIsHovered(true)}
@@ -88,7 +88,7 @@ export function MovieCard({ item, type }: MovieCardProps) {
           <OptimizedImage
             src={posterUrl}
             alt={title}
-            className={`w-full aspect-[2/3] object-cover transition-all duration-200 ${
+            className={`w-full h-80 transition-all duration-200 ${
               isHovered ? 'scale-102' : ''
             }`}
             lazy={true}
@@ -109,55 +109,55 @@ export function MovieCard({ item, type }: MovieCardProps) {
           </div>
         </div>
         
-        <div className="p-3 sm:p-4 relative flex-1 flex flex-col">
+        <div className="p-4 relative">
           {/* Smooth title with very subtle effect */}
-          <h3 className={`font-semibold text-gray-900 mb-1 sm:mb-2 line-clamp-2 text-sm sm:text-base transition-all duration-200 ${
-            isHovered
-              ? 'text-blue-700'
+          <h3 className={`font-semibold text-gray-900 mb-2 line-clamp-2 transition-all duration-200 ${
+            isHovered 
+              ? 'text-blue-700' 
               : 'text-gray-900'
           }`}>
             {title}
           </h3>
-
-          <div className={`flex items-center text-gray-500 text-xs sm:text-sm mb-2 sm:mb-3 transition-all duration-200 ${
+          
+          <div className={`flex items-center text-gray-500 text-sm mb-3 transition-all duration-200 ${
             isHovered ? 'text-blue-500' : 'text-gray-500'
           }`}>
-            <Calendar className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+            <Calendar className="h-4 w-4 mr-2" />
             <span>{year}</span>
           </div>
-
-          <p className="text-gray-600 text-xs sm:text-sm line-clamp-2 mb-3 sm:mb-4 flex-1">
+          
+          <p className="text-gray-600 text-sm line-clamp-2 mb-4">
             {item.overview || 'Sin descripción disponible'}
           </p>
           
           {/* Episode count information for TV shows with 50+ episodes */}
           {type === 'tv' && 'number_of_episodes' in item && item.number_of_episodes > 50 && (
-            <div className="mb-2 sm:mb-3 p-2 sm:p-3 bg-gradient-to-r from-amber-50 to-orange-50 rounded-lg border border-amber-200">
-              <div className="flex items-center mb-1">
-                <div className="bg-amber-500 p-1 rounded-md mr-1 sm:mr-2">
+            <div className="mb-4 p-3 bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl border-2 border-amber-200 shadow-sm">
+              <div className="flex items-center mb-2">
+                <div className="bg-amber-500 p-1.5 rounded-lg mr-2 shadow-sm">
                   <span className="text-white text-xs font-bold">📊</span>
                 </div>
                 <span className="text-xs font-bold text-amber-800">Serie Extensa</span>
               </div>
-              <div className="space-y-0.5 text-xs text-amber-700">
+              <div className="space-y-1 text-xs text-amber-700">
                 <p className="flex items-center">
                   <span className="text-blue-600 mr-1">📺</span>
-                  <strong className="text-xs">{item.number_of_episodes} eps</strong>
+                  <strong>{item.number_of_episodes} episodios</strong>
                 </p>
                 <p className="flex items-center">
                   <span className="text-green-600 mr-1">💰</span>
-                  <strong className="text-xs">$300 CUP/temp</strong>
+                  <strong>$300 CUP por temporada</strong>
                 </p>
               </div>
             </div>
           )}
           
           {/* Very subtle progress bar for rating */}
-          <div className="w-full bg-gray-200 rounded-full h-1 mb-2 sm:mb-3 overflow-hidden mt-auto">
-            <div
+          <div className="w-full bg-gray-200 rounded-full h-1 mb-4 overflow-hidden">
+            <div 
               className={`h-full rounded-full transition-all duration-300 ${
-                isHovered
-                  ? 'bg-gradient-to-r from-blue-400 to-blue-500'
+                isHovered 
+                  ? 'bg-gradient-to-r from-blue-400 to-blue-500' 
                   : 'bg-gray-400'
               }`}
               style={{ width: `${(item.vote_average / 10) * 100}%` }}
@@ -168,7 +168,7 @@ export function MovieCard({ item, type }: MovieCardProps) {
           <button
             onClick={handleCartAction}
             disabled={isAddingToCart}
-            className={`w-full px-2 sm:px-4 py-2 sm:py-3 rounded-lg font-medium text-xs sm:text-sm transition-all duration-200 transform relative overflow-hidden ${
+            className={`w-full px-4 py-3 rounded-lg font-medium transition-all duration-200 transform relative overflow-hidden ${
               inCart
                 ? 'bg-green-500 hover:bg-green-600 text-white shadow-sm'
                 : 'bg-blue-500 hover:bg-blue-600 text-white hover:shadow-md'
@@ -178,26 +178,23 @@ export function MovieCard({ item, type }: MovieCardProps) {
             {isAddingToCart && (
               <div className="absolute inset-0 bg-white/20 animate-pulse" />
             )}
-
+            
             <div className="flex items-center justify-center">
               {inCart ? (
                 <>
-                  <Check className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
-                  <span className="hidden sm:inline">En el Carrito</span>
-                  <span className="sm:hidden">En Carrito</span>
-                  <CheckCircle className="ml-1 sm:ml-2 h-3 w-3 sm:h-4 sm:w-4 text-green-300" />
+                  <Check className="mr-2 h-4 w-4" />
+                  <span>En el Carrito</span>
+                  <CheckCircle className="ml-2 h-4 w-4 text-green-300" />
                 </>
               ) : isAddingToCart ? (
                 <>
-                  <div className="animate-spin rounded-full h-3 w-3 sm:h-4 sm:w-4 border-b-2 border-white mr-1 sm:mr-2"></div>
-                  <span className="hidden sm:inline">Agregando...</span>
-                  <span className="sm:hidden">...</span>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  <span>Agregando...</span>
                 </>
               ) : (
                 <>
-                  <Plus className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
-                  <span className="hidden sm:inline">Agregar al Carrito</span>
-                  <span className="sm:hidden">Agregar</span>
+                  <Plus className="mr-2 h-4 w-4" />
+                  <span>Agregar al Carrito</span>
                 </>
               )}
             </div>
@@ -206,11 +203,10 @@ export function MovieCard({ item, type }: MovieCardProps) {
           {/* View Details Link */}
           <Link
             to={`/${type}/${item.id}`}
-            className="w-full mt-1 sm:mt-2 px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg font-medium text-xs sm:text-sm transition-all duration-200 border border-gray-300 text-gray-600 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 flex items-center justify-center"
+            className="w-full mt-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 border border-gray-300 text-gray-600 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 flex items-center justify-center"
           >
-            <Eye className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
-            <span className="hidden sm:inline">Ver Detalles</span>
-            <span className="sm:hidden">Detalles</span>
+            <Eye className="mr-2 h-4 w-4" />
+            Ver Detalles
           </Link>
         </div>
         

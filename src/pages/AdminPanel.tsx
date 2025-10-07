@@ -98,7 +98,13 @@ export function AdminPanel() {
     e.preventDefault();
     const success = login(loginForm.username, loginForm.password);
     if (!success) {
-      addNotification('Credenciales incorrectas', 'error');
+      addNotification({
+        type: 'error',
+        title: 'Error de autenticación',
+        message: 'Credenciales incorrectas',
+        section: 'Autenticación',
+        action: 'login_error'
+      });
     }
   };
 
@@ -106,7 +112,13 @@ export function AdminPanel() {
     e.preventDefault();
     
     if (!novelForm.titulo.trim() || !novelForm.genero || !novelForm.pais || novelForm.capitulos <= 0) {
-      addNotification('Por favor completa todos los campos requeridos', 'error');
+      addNotification({
+        type: 'error',
+        title: 'Campos requeridos',
+        message: 'Por favor completa todos los campos requeridos',
+        section: 'Gestión de Novelas',
+        action: 'validation_error'
+      });
       return;
     }
 
@@ -132,7 +144,13 @@ export function AdminPanel() {
     e.preventDefault();
     
     if (!zoneForm.name.trim() || zoneForm.cost < 0) {
-      addNotification('Por favor completa todos los campos correctamente', 'error');
+      addNotification({
+        type: 'error',
+        title: 'Campos incorrectos',
+        message: 'Por favor completa todos los campos correctamente',
+        section: 'Zonas de Entrega',
+        action: 'validation_error'
+      });
       return;
     }
 
@@ -197,12 +215,20 @@ export function AdminPanel() {
 
   const handlePricesUpdate = (e: React.FormEvent) => {
     e.preventDefault();
-    addNotification('Precios actualizados correctamente', 'success');
+    addNotification({
+      type: 'success',
+      title: 'Precios actualizados',
+      message: 'Precios actualizados correctamente',
+      section: 'Configuración de Precios',
+      action: 'update'
+    });
   };
 
   const handleExport = () => {
-    const config = exportSystemConfig();
-    const blob = new Blob([config], { type: 'application/json' });
+    const configJson = exportSystemConfig();
+    if (!configJson) return;
+    
+    const blob = new Blob([configJson], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
@@ -211,12 +237,17 @@ export function AdminPanel() {
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
-    addNotification('Configuración exportada correctamente', 'success');
   };
 
   const handleImport = () => {
     if (!importData.trim()) {
-      addNotification('Por favor pega la configuración a importar', 'error');
+      addNotification({
+        type: 'error',
+        title: 'Datos faltantes',
+        message: 'Por favor pega la configuración a importar',
+        section: 'Sistema',
+        action: 'import_validation_error'
+      });
       return;
     }
 
@@ -229,7 +260,13 @@ export function AdminPanel() {
 
   const handleFullBackupExport = async () => {
     try {
-      addNotification('Generando backup completo del sistema...', 'info');
+      addNotification({
+        type: 'info',
+        title: 'Backup en progreso',
+        message: 'Generando backup completo del sistema...',
+        section: 'Sistema',
+        action: 'backup_start'
+      });
 
       const fullSystemConfig = {
         version: state.systemConfig.version,
@@ -242,10 +279,22 @@ export function AdminPanel() {
       };
 
       await generateCompleteSourceCode(fullSystemConfig);
-      addNotification('Backup completo generado exitosamente', 'success');
+      addNotification({
+        type: 'success',
+        title: 'Backup completado',
+        message: 'Backup completo generado exitosamente',
+        section: 'Sistema',
+        action: 'backup_success'
+      });
     } catch (error) {
       console.error('Error al generar backup completo:', error);
-      addNotification('Error al generar el backup completo', 'error');
+      addNotification({
+        type: 'error',
+        title: 'Error en backup',
+        message: 'Error al generar el backup completo',
+        section: 'Sistema',
+        action: 'backup_error'
+      });
     }
   };
 
