@@ -18,8 +18,9 @@
     user-select: none;
     -webkit-touch-callout: none;
     -webkit-tap-highlight-color: transparent;
-    touch-action: manipulation;
+    touch-action: pan-y pinch-zoom;
     overflow-x: hidden;
+    overscroll-behavior-x: none;
   }
   
   /* Permitir selección solo en elementos de entrada */
@@ -206,28 +207,38 @@
 
   /* Touch swipe optimizations */
   .touch-pan-x {
-    touch-action: pan-x;
+    touch-action: pan-x pinch-zoom;
     -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
   }
 
   .touch-pan-y {
-    touch-action: pan-y;
+    touch-action: pan-y pinch-zoom;
     -webkit-overflow-scrolling: touch;
-  }
-
-  /* Prevent text selection during swipe */
-  .swipe-container {
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    -webkit-touch-callout: none;
+    overscroll-behavior-y: contain;
   }
 
   /* Smooth momentum scrolling */
   .momentum-scroll {
     -webkit-overflow-scrolling: touch;
     scroll-behavior: smooth;
+    overscroll-behavior: contain;
+  }
+
+  /* Horizontal scroll containers */
+  .overflow-x-auto {
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+  }
+
+  /* Prevent rubber band effect */
+  * {
+    overscroll-behavior: none;
+  }
+
+  /* But allow scroll on main containers */
+  #root, main, .overflow-y-auto {
+    overscroll-behavior-y: auto;
   }
 
   /* Improved button visibility on mobile */

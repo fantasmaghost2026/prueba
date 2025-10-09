@@ -52,51 +52,25 @@ function App() {
     };
   }, []);
 
-  // Deshabilitar zoom con teclado y gestos
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Deshabilitar Ctrl/Cmd + Plus/Minus/0 para zoom
       if ((e.ctrlKey || e.metaKey) && (e.key === '+' || e.key === '-' || e.key === '0')) {
         e.preventDefault();
-        return false;
       }
     };
 
     const handleWheel = (e: WheelEvent) => {
-      // Deshabilitar Ctrl/Cmd + scroll para zoom
       if (e.ctrlKey || e.metaKey) {
         e.preventDefault();
-        return false;
       }
     };
 
-    const handleTouchStart = (e: TouchEvent) => {
-      // Deshabilitar pinch-to-zoom en dispositivos táctiles
-      if (e.touches.length > 1) {
-        e.preventDefault();
-        return false;
-      }
-    };
-
-    const handleTouchMove = (e: TouchEvent) => {
-      // Deshabilitar pinch-to-zoom en dispositivos táctiles
-      if (e.touches.length > 1) {
-        e.preventDefault();
-        return false;
-      }
-    };
-
-    // Agregar event listeners
     document.addEventListener('keydown', handleKeyDown, { passive: false });
     document.addEventListener('wheel', handleWheel, { passive: false });
-    document.addEventListener('touchstart', handleTouchStart, { passive: false });
-    document.addEventListener('touchmove', handleTouchMove, { passive: false });
 
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
       document.removeEventListener('wheel', handleWheel);
-      document.removeEventListener('touchmove', handleTouchMove);
-      document.removeEventListener('touchstart', handleTouchStart);
     };
   }, []);
 

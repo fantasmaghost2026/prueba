@@ -47,17 +47,13 @@ export function NetflixSection({
   };
 
   const {
-    handleTouchStart,
-    handleTouchMove,
-    handleTouchEnd,
-    handleMouseDown,
-    swipeVelocity
+    handleMouseDown
   } = useTouchSwipe({
     scrollRef,
-    onSwipeLeft: () => canScrollLeft && scroll('left'),
-    onSwipeRight: () => canScrollRight && scroll('right'),
-    threshold: 50,
-    velocityThreshold: 0.3,
+    onSwipeLeft: () => canScrollRight && scroll('right'),
+    onSwipeRight: () => canScrollLeft && scroll('left'),
+    threshold: 30,
+    velocityThreshold: 0.2,
     preventScroll: false
   });
 
@@ -124,17 +120,13 @@ export function NetflixSection({
         <div
           ref={scrollRef}
           onScroll={checkScroll}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
           onMouseDown={handleMouseDown}
-          className="overflow-x-auto scrollbar-hide -mx-4 sm:mx-0 touch-pan-x swipe-container momentum-scroll cursor-grab active:cursor-grabbing"
+          className="overflow-x-auto scrollbar-hide -mx-4 sm:mx-0 momentum-scroll cursor-grab active:cursor-grabbing"
           style={{
             scrollbarWidth: 'none',
             msOverflowStyle: 'none',
             WebkitOverflowScrolling: 'touch',
-            transform: swipeVelocity > 0 ? 'translateZ(0)' : undefined,
-            touchAction: 'pan-x',
+            touchAction: 'pan-x pinch-zoom',
             userSelect: 'none',
             WebkitUserSelect: 'none'
           }}
