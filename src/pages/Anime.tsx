@@ -11,6 +11,7 @@ type AnimeCategory = 'popular' | 'top_rated';
 
 export function Anime() {
   const [category, setCategory] = useState<AnimeCategory>('popular');
+  const [isChangingCategory, setIsChangingCategory] = useState(false);
 
   const categoryTitles = {
     popular: 'Populares',
@@ -32,7 +33,12 @@ export function Anime() {
   );
 
   const handleCategoryChange = (newCategory: AnimeCategory) => {
-    setCategory(newCategory);
+    if (newCategory === category) return;
+    setIsChangingCategory(true);
+    setTimeout(() => {
+      setCategory(newCategory);
+      setIsChangingCategory(false);
+    }, 150);
   };
 
   if (loading && animeList.length === 0) {
@@ -67,28 +73,47 @@ export function Anime() {
           </p>
 
           {/* Category Filter */}
-          <div className="flex items-center space-x-1 bg-white rounded-lg p-1 shadow-sm w-fit">
-            <Filter className="h-4 w-4 text-gray-500 ml-2" />
-            {Object.entries(categoryTitles).map(([key, title]) => (
-              <button
-                key={key}
-                onClick={() => handleCategoryChange(key as AnimeCategory)}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                  category === key
-                    ? 'bg-pink-600 text-white'
-                    : 'text-gray-600 hover:text-pink-600 hover:bg-pink-50'
-                }`}
-              >
-                {title}
-              </button>
-            ))}
+          <div className="bg-white rounded-lg p-4 sm:p-5 shadow-md border border-gray-100 w-full">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center">
+                <Filter className="h-5 w-5 text-pink-600 mr-2" />
+                <span className="text-sm sm:text-base font-semibold text-gray-800">Categoría</span>
+              </div>
+              <span className="text-xs text-gray-500 hidden sm:inline">{animeList.length} resultados</span>
+            </div>
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
+              {Object.entries(categoryTitles).map(([key, title]) => (
+                <button
+                  key={key}
+                  onClick={() => handleCategoryChange(key as AnimeCategory)}
+                  className={`relative px-4 py-3 sm:py-4 rounded-xl text-sm font-semibold transition-all duration-300 transform ${
+                    category === key
+                      ? 'bg-gradient-to-r from-pink-600 to-pink-700 text-white shadow-lg shadow-pink-500/50 scale-105 ring-2 ring-pink-400 ring-offset-2'
+                      : 'bg-gray-50 text-gray-700 hover:text-pink-600 hover:bg-pink-50 hover:scale-102 border border-gray-200 hover:border-pink-300 hover:shadow-md'
+                  }`}
+                >
+                  <span className="relative z-10">{title}</span>
+                  {category === key && (
+                    <span className="absolute inset-0 bg-white/20 rounded-xl animate-pulse"></span>
+                  )}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
         {/* Anime Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mb-8">
-          {animeList.map((anime) => (
-            <MovieCard key={`${anime.id}-${category}`} item={anime} type="tv" />
+        <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mb-8 transition-opacity duration-300 ${
+          isChangingCategory ? 'opacity-50' : 'opacity-100'
+        }`}>
+          {animeList.map((anime, index) => (
+            <div
+              key={`${anime.id}-${category}`}
+              className="animate-fade-slide-up"
+              style={{ animationDelay: `${index * 30}ms` }}
+            >
+              <MovieCard item={anime} type="tv" />
+            </div>
           ))}
         </div>
 

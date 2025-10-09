@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Star, Calendar, Play, Pause, Sparkles, Zap, Heart } from 'lucide-react';
 import { OptimizedImage } from './OptimizedImage';
+import { useTouchSwipe } from '../hooks/useTouchSwipe';
 import { tmdbService } from '../services/tmdb';
 import { contentSyncService } from '../services/contentSync';
 import { performanceOptimizer } from '../utils/performance';
@@ -13,6 +14,7 @@ interface HeroCarouselProps {
 }
 
 export function HeroCarousel({ items }: HeroCarouselProps) {
+  const scrollRef = useRef<HTMLDivElement>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -20,6 +22,7 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
   const [itemVideos, setItemVideos] = useState<{ [key: number]: Video[] }>({});
   const [preloadedImages, setPreloadedImages] = useState<Set<string>>(new Set());
   const [isButtonHovered, setIsButtonHovered] = useState<string | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
 
   const AUTOPLAY_INTERVAL = 6000; // 6 seconds
 
@@ -118,6 +121,30 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
     setProgress(0);
   }, 100), [currentIndex, isTransitioning]);
 
+  // Touch/Mouse swipe for navigation on all devices
+  const {
+    handleTouchStart,
+    handleTouchMove,
+    handleTouchEnd,
+    handleMouseDown,
+    swipeVelocity
+  } = useTouchSwipe({
+    scrollRef,
+    onSwipeLeft: () => !isTransitioning && goToPrevious(),
+    onSwipeRight: () => !isTransitioning && goToNext(),
+    threshold: 50,
+    velocityThreshold: 0.3,
+    preventScroll: true
+  });
+
+  // Detect mobile device
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   // Handle keyboard navigation
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
@@ -208,7 +235,20 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
   };
 
   return (
-    <div className="relative h-96 md:h-[600px] overflow-hidden group">
+    <div
+      ref={scrollRef}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      onMouseDown={handleMouseDown}
+      className="relative h-96 md:h-[600px] overflow-hidden group touch-pan-y select-none cursor-grab active:cursor-grabbing"
+      style={{
+        transform: swipeVelocity > 0 ? 'translateZ(0)' : undefined,
+        WebkitUserSelect: 'none',
+        userSelect: 'none',
+        touchAction: 'pan-y'
+      }}
+    >
       {/* Background Images with Parallax Effect */}
       <div className="absolute inset-0">
         {items.map((item, index) => {
@@ -246,15 +286,21 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
       <button
         onClick={goToPrevious}
         disabled={isTransitioning}
-        className="absolute left-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-md hover:bg-white/20 disabled:opacity-50 text-white p-4 rounded-full transition-all duration-300 hover:scale-110 z-20 opacity-0 group-hover:opacity-100"
+        className={`absolute left-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-md hover:bg-white/20 disabled:opacity-50 text-white p-4 rounded-full transition-all duration-300 hover:scale-110 z-20 ${
+          isMobile ? 'opacity-50 active:opacity-100' : 'opacity-0 group-hover:opacity-100'
+        }`}
+        aria-label="Previous slide"
       >
         <ChevronLeft className="h-6 w-6" />
       </button>
-      
+
       <button
         onClick={goToNext}
         disabled={isTransitioning}
-        className="absolute right-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-md hover:bg-white/20 disabled:opacity-50 text-white p-4 rounded-full transition-all duration-300 hover:scale-110 z-20 opacity-0 group-hover:opacity-100"
+        className={`absolute right-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-md hover:bg-white/20 disabled:opacity-50 text-white p-4 rounded-full transition-all duration-300 hover:scale-110 z-20 ${
+          isMobile ? 'opacity-50 active:opacity-100' : 'opacity-0 group-hover:opacity-100'
+        }`}
+        aria-label="Next slide"
       >
         <ChevronRight className="h-6 w-6" />
       </button>
